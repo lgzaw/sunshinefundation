@@ -1,0 +1,2903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CenterNecklace Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a237e;
+            --secondary: #3949ab;
+            --accent: #ff4081;
+            --light: #f5f7ff;
+            --dark: #0d1b2a;
+            --success: #00c853;
+            --warning: #ff9100;
+            --pearl: #f8f9fa;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%);
+            color: var(--dark);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 100;
+            flex-wrap: wrap;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .logo-icon {
+            color: #ffeb3b;
+            transform: rotate(-15deg);
+        }
+        
+        /* Header Navigation (Bulletin Boards) for wide screens */
+        .header-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex: 1;
+            justify-content: center;
+            margin: 0 2rem;
+        }
+        
+        .header-nav-item {
+            padding: 0.6rem 1.2rem;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            white-space: nowrap;
+        }
+        
+        .header-nav-item:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+        
+        .header-nav-item.active {
+            background: var(--accent);
+            border-color: white;
+            box-shadow: 0 4px 15px rgba(255, 64, 129, 0.3);
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--accent);
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .mobile-menu-btn:hover {
+            background: #f50057;
+            transform: scale(1.1);
+        }
+        
+        /* Side Menu for Mobile */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            z-index: 1000;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+            padding-top: 80px;
+        }
+        
+        .side-menu.active {
+            right: 0;
+        }
+        
+        .side-menu-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 1rem;
+        }
+        
+        .side-menu-header h3 {
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .side-menu-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 0 1.5rem;
+        }
+        
+        .side-menu-item {
+            padding: 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+        
+        .side-menu-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .side-menu-item.active {
+            background: rgba(255, 64, 129, 0.3);
+            border-left-color: var(--accent);
+        }
+        
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+            backdrop-filter: blur(3px);
+        }
+        
+        .menu-overlay.active {
+            display: block;
+        }
+        
+        .search-container {
+            position: relative;
+        }
+        
+        .search-input {
+            padding: 0.7rem 1rem 0.7rem 2.8rem;
+            border: none;
+            border-radius: 30px;
+            width: 200px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            width: 250px;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+        
+        .signin-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.8rem;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .signin-btn:hover {
+            background: #f50057;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 64, 129, 0.3);
+        }
+        
+        /* Compact Horizontal Necklace Navigation */
+        .necklace-container {
+            position: relative;
+            height: 180px;
+            margin: 1rem auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            max-width: 1200px;
+        }
+        
+        .necklace-track {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 0 60px;
+        }
+        
+        /* Center Pearl (Active Bulletin) */
+        .center-pearl {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle at 30% 30%, #ffffff, #f0f0f0);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 
+                0 15px 35px rgba(255, 64, 129, 0.4),
+                inset 0 0 25px rgba(255, 255, 255, 0.9),
+                inset 0 0 35px rgba(255, 255, 255, 0.7);
+            z-index: 50;
+            border: 4px solid var(--accent);
+            animation: centerGlow 2s infinite alternate;
+            flex-shrink: 0;
+            margin: 0 20px;
+        }
+        
+        @keyframes centerGlow {
+            0% { box-shadow: 
+                0 15px 35px rgba(255, 64, 129, 0.4),
+                inset 0 0 25px rgba(255, 255, 255, 0.9),
+                inset 0 0 35px rgba(255, 255, 255, 0.7); }
+            100% { box-shadow: 
+                0 15px 35px rgba(255, 64, 129, 0.6),
+                inset 0 0 25px rgba(255, 255, 255, 0.9),
+                inset 0 0 35px rgba(255, 255, 255, 0.7); }
+        }
+        
+        .center-number {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--primary);
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .center-label {
+            font-size: 0.8rem;
+            margin-top: 0.4rem;
+            color: var(--dark);
+            text-align: center;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Outer Pearls */
+        .outer-pearl {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 30% 30%, #ffffff, #f0f0f0);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 
+                0 8px 20px rgba(0, 0, 0, 0.15),
+                inset 0 0 15px rgba(255, 255, 255, 0.8);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid rgba(57, 73, 171, 0.3);
+            flex-shrink: 0;
+            margin: 0 15px;
+            opacity: 0.7;
+        }
+        
+        .outer-pearl:hover {
+            box-shadow: 
+                0 12px 25px rgba(0, 0, 0, 0.25),
+                inset 0 0 20px rgba(255, 255, 255, 0.9);
+            transform: scale(1.1);
+            opacity: 1;
+            z-index: 10;
+        }
+        
+        .pearl-number {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .pearl-label {
+            font-size: 0.6rem;
+            margin-top: 0.3rem;
+            color: var(--dark);
+            text-align: center;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Visual string for necklace */
+        .necklace-string {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent 10%, 
+                rgba(141, 110, 99, 0.3) 20%, 
+                rgba(141, 110, 99, 0.3) 80%, 
+                transparent 90%);
+            z-index: 0;
+        }
+        
+        /* Necklace Controls - Arrows next to indicator */
+        .necklace-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin: 0.5rem auto 1.5rem;
+        }
+        
+        .nav-arrow {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .nav-arrow:hover {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            transform: scale(1.1);
+        }
+        
+        .necklace-indicator {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--dark);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            min-width: 180px;
+            justify-content: center;
+        }
+        
+        .necklace-indicator .current {
+            color: var(--accent);
+            font-weight: 800;
+            font-size: 1.5rem;
+            min-width: 25px;
+            text-align: center;
+        }
+        
+        /* Main Display Area */
+        .display-area {
+            flex: 1;
+            background: white;
+            margin: 0 auto 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 500px;
+            max-width: 1200px;
+            width: calc(100% - 4rem);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .display-header {
+            padding: 1.5rem 2rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .display-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .display-title-icon {
+            background: white;
+            color: var(--primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .display-content {
+            padding: 2rem;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 400px;
+            background: #fafafa;
+        }
+        
+        /* Bulletin 1 - Scrolling Background */
+        .bulletin-1 {
+            position: relative;
+            height: 100%;
+            overflow: hidden;
+            border-radius: 15px;
+        }
+        
+        .scrolling-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 400%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                rgba(57, 73, 171, 0.15) 0%, 
+                rgba(255, 64, 129, 0.15) 25%, 
+                rgba(0, 200, 83, 0.15) 50%, 
+                rgba(255, 145, 0, 0.15) 75%, 
+                rgba(57, 73, 171, 0.15) 100%);
+            animation: scrollBackground 40s linear infinite;
+            z-index: 0;
+        }
+        
+        @keyframes scrollBackground {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-75%); }
+        }
+        
+        .story-display {
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 75%;
+            margin: 2rem auto;
+            backdrop-filter: blur(5px);
+        }
+        
+        .number-display {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--accent);
+            color: white;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: 800;
+            box-shadow: 0 10px 25px rgba(255, 64, 129, 0.4);
+            z-index: 2;
+        }
+        
+        .number-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-top: 0.3rem;
+        }
+        
+        /* Year Navigation */
+        .year-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .year-btn {
+            padding: 0.9rem 1.8rem;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #555;
+        }
+        
+        .year-btn:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+            transform: translateY(-3px);
+        }
+        
+        .year-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-color: var(--secondary);
+            box-shadow: 0 8px 20px rgba(57, 73, 171, 0.3);
+        }
+        
+        .story-container {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            border: 1px solid #eee;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Card Displays */
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.8rem;
+            max-height: 350px;
+            overflow-y: auto;
+            padding: 1.5rem;
+            background: #f9f9f9;
+            border-radius: 15px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            border: 1px solid #f0f0f0;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+            padding: 1.2rem;
+            background: #f9f9f9;
+            color: var(--dark);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .card-body {
+            padding: 1.2rem;
+        }
+        
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, #0d1b2a, #1b263b);
+            color: white;
+            padding: 2.5rem 2rem 1.5rem;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2.5rem;
+            margin-bottom: 2.5rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .footer-section h4 {
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            color: #ffeb3b;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-links a {
+            color: #b0bec5;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #90a4ae;
+            font-size: 0.9rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        /* Admin Dashboard Styles */
+        .admin-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 2000;
+            background: white;
+        }
+        
+        .admin-sidebar {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem 1rem;
+            overflow-y: auto;
+        }
+        
+        .admin-content {
+            padding: 2rem;
+            background: var(--light);
+            overflow-y: auto;
+        }
+        
+        .admin-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+        
+        .admin-nav-item {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+        
+        .admin-nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .admin-nav-item.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-weight: 600;
+        }
+        
+        /* Club Dashboard Specific */
+        .club-sidebar {
+            background: linear-gradient(135deg, var(--success), #64dd17);
+        }
+        
+        /* Responsive Design */
+        @media (min-width: 1200px) {
+            .header-nav {
+                display: flex;
+            }
+            
+            .mobile-menu-btn {
+                display: none !important;
+            }
+            
+            .necklace-container {
+                height: 160px;
+            }
+            
+            .center-pearl {
+                width: 110px;
+                height: 110px;
+            }
+            
+            .outer-pearl {
+                width: 70px;
+                height: 70px;
+            }
+        }
+        
+        @media (max-width: 1199px) {
+            .header-nav {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: flex;
+            }
+            
+            .necklace-container {
+                height: 160px;
+            }
+            
+            .center-pearl {
+                width: 110px;
+                height: 110px;
+            }
+            
+            .outer-pearl {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .display-area {
+                min-height: 450px;
+            }
+            
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .necklace-controls {
+                gap: 0.8rem;
+            }
+            
+            .necklace-indicator {
+                min-width: 160px;
+                padding: 0.7rem 1.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+            
+            .search-input {
+                width: 180px;
+            }
+            
+            .search-input:focus {
+                width: 220px;
+            }
+            
+            .necklace-container {
+                height: 140px;
+            }
+            
+            .center-pearl {
+                width: 100px;
+                height: 100px;
+                margin: 0 10px;
+            }
+            
+            .outer-pearl {
+                width: 60px;
+                height: 60px;
+                margin: 0 8px;
+            }
+            
+            .pearl-label {
+                font-size: 0.5rem;
+            }
+            
+            .nav-arrow {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            
+            .necklace-indicator {
+                min-width: 140px;
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+            
+            .display-area {
+                width: calc(100% - 2rem);
+                margin: 0 1rem 2rem;
+                min-height: 400px;
+            }
+            
+            .display-content {
+                padding: 1.5rem;
+            }
+            
+            .story-display {
+                max-width: 90%;
+                padding: 1.8rem;
+            }
+            
+            .cards-container {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            }
+            
+            .admin-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-sidebar {
+                padding: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .logo span:not(.logo-icon) {
+                display: none;
+            }
+            
+            .search-input {
+                width: 150px;
+            }
+            
+            .necklace-container {
+                height: 120px;
+            }
+            
+            .center-pearl {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .center-number {
+                font-size: 1.6rem;
+            }
+            
+            .outer-pearl {
+                width: 50px;
+                height: 50px;
+                margin: 0 5px;
+            }
+            
+            .pearl-number {
+                font-size: 1rem;
+            }
+            
+            .pearl-label {
+                display: none;
+            }
+            
+            .nav-arrow {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .necklace-indicator {
+                font-size: 0.9rem;
+                padding: 0.5rem 1rem;
+                min-width: 120px;
+            }
+            
+            .display-area {
+                min-height: 350px;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .mb-1 { margin-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .mb-3 { margin-bottom: 1.5rem; }
+        .mb-4 { margin-bottom: 2rem; }
+        
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .mt-4 { margin-top: 2rem; }
+        
+        .btn {
+            padding: 0.9rem 1.8rem;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(57, 73, 171, 0.3);
+        }
+        
+        .btn-block {
+            width: 100%;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, var(--secondary), var(--primary));
+        }
+        
+        /* Club Dashboard Specific */
+        .club-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid var(--success);
+        }
+        
+        .stat-card h4 {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--dark);
+        }
+        
+        .stat-card .stat-change {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        
+        .stat-card .stat-change.positive {
+            color: var(--success);
+        }
+        
+        .stat-card .stat-change.negative {
+            color: var(--accent);
+        }
+        
+        .activity-list {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            transition: all 0.3s;
+        }
+        
+        .activity-item:hover {
+            background: #f9f9f9;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: var(--primary);
+        }
+        
+        .activity-details {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+        
+        .activity-time {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .members-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .member-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .member-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .member-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--success), #64dd17);
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .member-name {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+        
+        .member-role {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+        
+        .member-status {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        
+        .member-status.active {
+            background: rgba(0, 200, 83, 0.1);
+            color: var(--success);
+        }
+        
+        .member-status.inactive {
+            background: rgba(255, 64, 129, 0.1);
+            color: var(--accent);
+        }
+        
+        .event-timeline {
+            position: relative;
+            padding-left: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .event-timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--success);
+        }
+        
+        .timeline-event {
+            position: relative;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .timeline-event::before {
+            content: '';
+            position: absolute;
+            left: -1.75rem;
+            top: 1.75rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--success);
+        }
+        
+        .timeline-date {
+            font-weight: 600;
+            color: var(--success);
+            margin-bottom: 0.5rem;
+        }
+        
+        .timeline-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .club-settings {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--success);
+            box-shadow: 0 0 0 3px rgba(0, 200, 83, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-gem logo-icon"></i>
+            <span>CenterNecklace</span>
+        </div>
+        
+        <!-- Header Navigation for wide screens -->
+        <div class="header-nav" id="headerNav">
+            <div class="header-nav-item active" data-bulletin="1">Board 1</div>
+            <div class="header-nav-item" data-bulletin="2">Board 2</div>
+            <div class="header-nav-item" data-bulletin="3">Board 3</div>
+            <div class="header-nav-item" data-bulletin="4">Board 4</div>
+            <div class="header-nav-item" data-bulletin="5">Board 5</div>
+            <div class="header-nav-item" data-bulletin="6">Board 6</div>
+            <div class="header-nav-item" data-bulletin="7">Board 7</div>
+            <div class="header-nav-item" data-bulletin="8">Board 8</div>
+        </div>
+        
+        <div class="header-actions">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search...">
+            </div>
+            
+            <!-- Mobile Menu Button (visible only on narrow screens) -->
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <button class="signin-btn" id="signinBtn">
+                <i class="fas fa-sign-in-alt"></i> Sign In
+            </button>
+        </div>
+    </header>
+    
+    <!-- Side Menu for Mobile -->
+    <div class="side-menu" id="sideMenu">
+        <div class="side-menu-header">
+            <h3><i class="fas fa-gem"></i> Bulletin Boards</h3>
+        </div>
+        <div class="side-menu-items">
+            <div class="side-menu-item active" data-bulletin="1">Board 1 - Welcome</div>
+            <div class="side-menu-item" data-bulletin="2">Board 2 - Annual Stories</div>
+            <div class="side-menu-item" data-bulletin="3">Board 3 - Historical Archive</div>
+            <div class="side-menu-item" data-bulletin="4">Board 4 - Mixed Content</div>
+            <div class="side-menu-item" data-bulletin="5">Board 5 - All Clubs (46 Cards)</div>
+            <div class="side-menu-item" data-bulletin="6">Board 6 - External Links (7 Cards)</div>
+            <div class="side-menu-item" data-bulletin="7">Board 7 - Letter Collection (21 Cards)</div>
+            <div class="side-menu-item" data-bulletin="8">Board 8 - Contact & Support</div>
+        </div>
+    </div>
+    
+    <!-- Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+    
+    <!-- Compact Horizontal Necklace Navigation -->
+    <div class="necklace-container">
+        <div class="necklace-string"></div>
+        <div class="necklace-track" id="necklaceTrack">
+            <!-- Pearls will be added dynamically by JavaScript -->
+        </div>
+    </div>
+    
+    <!-- Necklace Controls -->
+    <div class="necklace-controls">
+        <button class="nav-arrow" id="prevBtn">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        
+        <div class="necklace-indicator">
+            <span>Bulletin</span>
+            <span class="current" id="currentBulletin">1</span>
+            <span>of 8</span>
+        </div>
+        
+        <button class="nav-arrow" id="nextBtn">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+    
+    <!-- Main Display Area -->
+    <div class="display-area">
+        <div class="display-header">
+            <div class="display-title">
+                <div class="display-title-icon">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                <span id="displayTitle">Bulletin Board 1 - Welcome</span>
+            </div>
+            <div id="bulletinIndicator" style="font-size: 0.9rem; opacity: 0.9;">Active Display</div>
+        </div>
+        
+        <div class="display-content" id="displayContent">
+            <div class="bulletin-1">
+                <div class="scrolling-bg"></div>
+                <div class="story-display">
+                    <h3 class="mb-2">Compact Horizontal Necklace Navigation</h3>
+                    <p class="mb-2">This navigation places the <strong>active bulletin in the center</strong> with the other bulletins arranged horizontally around it like pearls on a necklace.</p>
+                    <p class="mb-2">The center pearl is larger and highlighted, showing it's the active bulletin. Only 3-5 bulletins are visible at a time for a clean, compact look.</p>
+                    <p>Click on any pearl to bring it to the center, or use the arrow buttons to rotate the necklace. The necklace automatically rotates every 15 seconds.</p>
+                </div>
+                <div class="number-display">
+                    <div>8</div>
+                    <div class="number-label">Bulletins</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Navigation</h4>
+                <ul class="footer-links">
+                    <li><a href="#" data-bulletin="1">Bulletin 1 - Welcome</a></li>
+                    <li><a href="#" data-bulletin="2">Bulletin 2 - Year Stories</a></li>
+                    <li><a href="#" data-bulletin="3">Bulletin 3 - More Stories</a></li>
+                    <li><a href="#" data-bulletin="4">Bulletin 4 - Mixed Content</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Card Collections</h4>
+                <ul class="footer-links">
+                    <li><a href="#" data-bulletin="5">Bulletin 5 - 46 Cards</a></li>
+                    <li><a href="#" data-bulletin="6">Bulletin 6 - 7 Cards</a></li>
+                    <li><a href="#" data-bulletin="7">Bulletin 7 - 21 Cards</a></li>
+                    <li><a href="#" data-bulletin="8">Bulletin 8 - Contact</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Platform</h4>
+                <ul class="footer-links">
+                    <li><a href="#" id="adminLinkFooter">Admin Dashboard</a></li>
+                    <li><a href="#" id="clubLinkFooter">Club Access</a></li>
+                    <li><a href="#">JSON Database</a></li>
+                    <li><a href="#">Responsive Design</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Connect</h4>
+                <ul class="footer-links">
+                    <li><a href="#" data-bulletin="8">Contact Page</a></li>
+                    <li><a href="#">Donation Info</a></li>
+                    <li><a href="#">Volunteer Portal</a></li>
+                    <li><a href="#">Help & Support</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            &copy; 2023 CenterNecklace Platform. Active bulletin is always displayed in the center.
+        </div>
+    </footer>
+    
+    <!-- Sign-in Modal -->
+    <div class="modal-overlay" id="signinModal">
+        <div class="signin-modal" style="background: white; border-radius: 15px; width: 90%; max-width: 450px; overflow: hidden; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);">
+            <div class="display-header" style="border-radius: 0;">
+                <div class="display-title">
+                    <div class="display-title-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <span>Secure Sign In</span>
+                </div>
+                <button id="closeModal" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            </div>
+            
+            <div style="padding: 2rem;">
+                <div style="display: flex; border-bottom: 2px solid #eee; margin-bottom: 2rem;">
+                    <button class="signin-tab-btn active" data-tab="admin" style="flex: 1; padding: 1rem; background: none; border: none; border-bottom: 3px solid var(--accent); font-weight: 600; color: var(--primary); cursor: pointer;">
+                        <i class="fas fa-user-shield"></i> Admin
+                    </button>
+                    <button class="signin-tab-btn" data-tab="club" style="flex: 1; padding: 1rem; background: none; border: none; font-weight: 600; color: var(--gray); cursor: pointer;">
+                        <i class="fas fa-users"></i> Club
+                    </button>
+                </div>
+                
+                <!-- Admin Sign-in -->
+                <div id="adminSigninForm">
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Admin Username</label>
+                        <input type="text" class="form-input" id="adminUsername" placeholder="Enter admin username" style="width: 100%; padding: 0.9rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;">
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Password</label>
+                        <input type="password" class="form-input" id="adminPassword" placeholder="Enter password" style="width: 100%; padding: 0.9rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;">
+                    </div>
+                    
+                    <button class="btn btn-primary btn-block" id="adminSigninBtn">
+                        <i class="fas fa-sign-in-alt"></i> Sign In as Admin
+                    </button>
+                    
+                    <p style="text-align: center; margin-top: 1.5rem; color: var(--gray); font-size: 0.9rem;">
+                        Demo: Use "admin" as username and any password
+                    </p>
+                </div>
+                
+                <!-- Club Sign-in -->
+                <div id="clubSigninForm" class="hidden">
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Club ID or Username</label>
+                        <input type="text" class="form-input" id="clubId" placeholder="Enter club ID or username" style="width: 100%; padding: 0.9rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;">
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Club Password</label>
+                        <input type="password" class="form-input" id="clubPassword" placeholder="Enter club password" style="width: 100%; padding: 0.9rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;">
+                    </div>
+                    
+                    <button class="btn btn-primary btn-block" id="clubSigninBtn">
+                        <i class="fas fa-sign-in-alt"></i> Sign In to Club Dashboard
+                    </button>
+                    
+                    <p style="text-align: center; margin-top: 1.5rem; color: var(--gray); font-size: 0.9rem;">
+                        Demo clubs: <br>
+                        • "techclub" / "password123" <br>
+                        • "artists" / "password123" <br>
+                        • "sports" / "password123" <br>
+                        • "science" / "password123"
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard (hidden by default) -->
+    <div class="admin-container hidden" id="adminDashboard">
+        <div class="admin-sidebar">
+            <h2 class="mb-4">Admin Panel</h2>
+            <div class="admin-nav">
+                <div class="admin-nav-item active" data-admin-section="dashboard">Dashboard</div>
+                <div class="admin-nav-item" data-admin-section="bulletins">Manage Bulletins</div>
+                <div class="admin-nav-item" data-admin-section="stories">Manage Stories</div>
+                <div class="admin-nav-item" data-admin-section="cardsets">Manage Card Sets</div>
+                <div class="admin-nav-item" data-admin-section="cards">Manage Cards</div>
+                <div class="admin-nav-item" data-admin-section="clubs">Manage Clubs</div>
+                <div class="admin-nav-item" style="margin-top: 3rem;" id="logoutAdmin">Logout</div>
+            </div>
+        </div>
+        
+        <div class="admin-content">
+            <div id="adminDashboardContent">
+                <h1 class="mb-3">Admin Master Dashboard</h1>
+                <p>Welcome to the admin panel. Use the sidebar to manage all content on the platform.</p>
+                
+                <div class="cards-container mt-4">
+                    <div class="card">
+                        <div class="card-header">Bulletins</div>
+                        <div class="card-body">
+                            <p>8 Bulletin Boards</p>
+                            <p>Manage display types</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">Stories</div>
+                        <div class="card-body">
+                            <p>24 Stories</p>
+                            <p>CRUD operations</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">Card Sets</div>
+                        <div class="card-body">
+                            <p>5 Card Sets</p>
+                            <p>With 74 cards total</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">Clubs</div>
+                        <div class="card-body">
+                            <p>46 Clubs</p>
+                            <p>Each with dashboard</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Admin Content Sections -->
+                <div id="adminManageBulletins" class="hidden mt-4">
+                    <h3>Manage Bulletin Boards</h3>
+                    <p>Edit, delete, or reorder the 8 bulletin boards.</p>
+                </div>
+                
+                <div id="adminManageStories" class="hidden mt-4">
+                    <h3>Manage Stories</h3>
+                    <p>Add, edit, or delete stories across all bulletin boards.</p>
+                </div>
+                
+                <div id="adminManageCardSets" class="hidden mt-4">
+                    <h3>Manage Card Sets</h3>
+                    <p>Organize cards into sets for different bulletin boards.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Club Dashboard (hidden by default) -->
+    <div class="admin-container hidden" id="clubDashboard">
+        <div class="admin-sidebar club-sidebar">
+            <h2 class="mb-4" id="clubName">Club Dashboard</h2>
+            <div class="admin-nav">
+                <div class="admin-nav-item active" data-club-section="home">Club Home</div>
+                <div class="admin-nav-item" data-club-section="members">Members</div>
+                <div class="admin-nav-item" data-club-section="history">History</div>
+                <div class="admin-nav-item" data-club-section="activities">Activities</div>
+                <div class="admin-nav-item" data-club-section="settings">Settings</div>
+                <div class="admin-nav-item" style="margin-top: 3rem;" id="logoutClub">Logout</div>
+            </div>
+        </div>
+        
+        <div class="admin-content">
+            <!-- Club Home Content -->
+            <div id="clubDashboardContent">
+                <h1 class="mb-3" id="clubTitle">Club Dashboard</h1>
+                <div class="club-header mb-4" style="height: 150px; background: linear-gradient(135deg, var(--success), #64dd17); border-radius: 10px; display: flex; justify-content: center; align-items: center; color: white; flex-direction: column;">
+                    <i class="fas fa-users" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                    <h2 id="clubHeaderName">Club Name</h2>
+                    <p id="clubDescription" style="margin-top: 0.5rem; opacity: 0.9;"></p>
+                </div>
+                
+                <!-- Club Stats -->
+                <div class="club-stats mb-4">
+                    <div class="stat-card">
+                        <h4>TOTAL MEMBERS</h4>
+                        <div class="stat-value" id="totalMembers">0</div>
+                        <div class="stat-change positive" id="memberChange">+0 this month</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>ACTIVE MEMBERS</h4>
+                        <div class="stat-value" id="activeMembers">0</div>
+                        <div class="stat-change positive" id="activeChange">+0 this week</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>UPCOMING EVENTS</h4>
+                        <div class="stat-value" id="upcomingEvents">0</div>
+                        <div class="stat-change positive">Next: <span id="nextEventDate">Soon</span></div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>ACTIVITY LEVEL</h4>
+                        <div class="stat-value" id="activityLevel">0%</div>
+                        <div class="stat-change positive" id="activityChange">+0% from last month</div>
+                    </div>
+                </div>
+                
+                <!-- Recent Activity -->
+                <h3 class="mb-3">Recent Activity</h3>
+                <div class="activity-list mb-4" id="recentActivity">
+                    <!-- Activity items will be added dynamically -->
+                </div>
+                
+                <!-- Upcoming Events -->
+                <h3 class="mb-3">Upcoming Events</h3>
+                <div class="cards-container">
+                    <!-- Event cards will be added dynamically -->
+                </div>
+            </div>
+            
+            <!-- Members Section -->
+            <div id="clubMembers" class="hidden mt-4">
+                <div class="mb-4" style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3>Club Members</h3>
+                    <button class="btn btn-primary" id="addMemberBtn">
+                        <i class="fas fa-user-plus"></i> Add Member
+                    </button>
+                </div>
+                
+                <!-- Member Filters -->
+                <div class="year-nav mb-4">
+                    <div class="year-btn active" data-filter="all">All Members</div>
+                    <div class="year-btn" data-filter="active">Active</div>
+                    <div class="year-btn" data-filter="inactive">Inactive</div>
+                    <div class="year-btn" data-filter="leadership">Leadership</div>
+                </div>
+                
+                <!-- Members Grid -->
+                <div class="members-grid" id="membersGrid">
+                    <!-- Member cards will be added dynamically -->
+                </div>
+            </div>
+            
+            <!-- History Section -->
+            <div id="clubHistory" class="hidden mt-4">
+                <h3 class="mb-4">Club History & Timeline</h3>
+                <div class="event-timeline" id="clubTimeline">
+                    <!-- Timeline events will be added dynamically -->
+                </div>
+            </div>
+            
+            <!-- Activities Section -->
+            <div id="clubActivities" class="hidden mt-4">
+                <div class="mb-4" style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3>Club Activities & Events</h3>
+                    <button class="btn btn-primary" id="addActivityBtn">
+                        <i class="fas fa-calendar-plus"></i> Add Activity
+                    </button>
+                </div>
+                
+                <!-- Activity Filters -->
+                <div class="year-nav mb-4">
+                    <div class="year-btn active" data-filter="upcoming">Upcoming</div>
+                    <div class="year-btn" data-filter="past">Past Events</div>
+                    <div class="year-btn" data-filter="all">All Activities</div>
+                </div>
+                
+                <!-- Activities Grid -->
+                <div class="cards-container" id="activitiesGrid">
+                    <!-- Activity cards will be added dynamically -->
+                </div>
+            </div>
+            
+            <!-- Settings Section -->
+            <div id="clubSettings" class="hidden mt-4">
+                <h3 class="mb-4">Club Settings</h3>
+                <div class="club-settings">
+                    <form id="clubSettingsForm">
+                        <div class="form-group">
+                            <label class="form-label">Club Name</label>
+                            <input type="text" class="form-control" id="settingsClubName" placeholder="Enter club name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Club Description</label>
+                            <textarea class="form-control" id="settingsClubDescription" rows="3" placeholder="Describe your club"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Contact Email</label>
+                            <input type="email" class="form-control" id="settingsClubEmail" placeholder="club@example.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Club Website</label>
+                            <input type="url" class="form-control" id="settingsClubWebsite" placeholder="https://example.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Meeting Schedule</label>
+                            <input type="text" class="form-control" id="settingsMeetingSchedule" placeholder="e.g., Every Tuesday at 6 PM">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Change Password</label>
+                            <input type="password" class="form-control" id="settingsNewPassword" placeholder="New password (leave blank to keep current)">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" id="settingsConfirmPassword" placeholder="Confirm new password">
+                        </div>
+                        
+                        <button type="button" class="btn btn-primary" id="saveSettingsBtn">
+                            <i class="fas fa-save"></i> Save Settings
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JSON Database Simulation with Clubs
+        const platformData = {
+            bulletins: [
+                { id: 1, title: "Bulletin Board 1 - Welcome", type: "scrolling", storyId: 1, number: 8 },
+                { id: 2, title: "Bulletin Board 2 - Annual Stories", type: "years", years: [2023, 2022, 2021, 2020, 2019] },
+                { id: 3, title: "Bulletin Board 3 - Historical Archive", type: "years", years: [2023, 2022, 2021] },
+                { id: 4, title: "Bulletin Board 4 - Mixed Content Hub", type: "mixed", storyId: 2, cardSetId: 1 },
+                { id: 5, title: "Bulletin Board 5 - All Clubs (46 Cards)", type: "cards", cardSetId: 2, count: 46 },
+                { id: 6, title: "Bulletin Board 6 - External Links (7 Cards)", type: "cards", cardSetId: 3, count: 7 },
+                { id: 7, title: "Bulletin Board 7 - Letter Collection (21 Cards)", type: "cards", cardSetId: 4, count: 21 },
+                { id: 8, title: "Bulletin Board 8 - Contact & Support", type: "contact" }
+            ],
+            stories: [
+                { id: 1, title: "Compact Horizontal Necklace Navigation", content: "This navigation places the active bulletin in the center with the other bulletins arranged horizontally around it like pearls on a necklace. The center pearl is larger and highlighted, showing it's the active bulletin. Only 3-5 bulletins are visible at a time for a clean, compact look." },
+                { id: 2, title: "Featured Content Hub", content: "This bulletin demonstrates the mixed content capability of the platform. You can switch between a featured story and three different card sets using the control buttons. Each card set represents a different category of content, all managed through the JSON database structure." },
+                { id: 3, title: "2023 Annual Report", content: "2023 has been a transformative year for our organization. We successfully launched the CenterNecklace platform, which has revolutionized how we present content to our community. Engagement has increased by 65% since implementation." },
+                { id: 4, title: "2022 Highlights & Achievements", content: "In 2022, we focused on digital transformation and community outreach. We migrated all our content to a structured JSON database, which improved content management efficiency by 75%." }
+            ],
+            cardSets: [
+                { id: 1, name: "Featured Cards", cards: [1, 2, 3] },
+                { id: 2, name: "All Clubs", cards: Array.from({length: 46}, (_, i) => i + 4) },
+                { id: 3, name: "External Links", cards: Array.from({length: 7}, (_, i) => i + 50) },
+                { id: 4, name: "Letter Collection", cards: Array.from({length: 21}, (_, i) => i + 57) }
+            ],
+            clubs: [
+                {
+                    id: "techclub",
+                    name: "Technology Club",
+                    password: "password123",
+                    description: "A club for technology enthusiasts interested in coding, hardware, and innovation.",
+                    founded: "2018",
+                    totalMembers: 156,
+                    activeMembers: 142,
+                    upcomingEvents: 3,
+                    activityLevel: "85%",
+                    contactEmail: "techclub@example.com",
+                    website: "https://techclub.example.com",
+                    meetingSchedule: "Every Wednesday at 7 PM",
+                    members: [
+                        { id: 1, name: "Alex Johnson", role: "President", status: "active", joinDate: "2022-03-15" },
+                        { id: 2, name: "Maria Garcia", role: "Vice President", status: "active", joinDate: "2021-11-22" },
+                        { id: 3, name: "David Chen", role: "Treasurer", status: "active", joinDate: "2023-01-10" },
+                        { id: 4, name: "Sarah Williams", role: "Secretary", status: "active", joinDate: "2022-08-05" },
+                        { id: 5, name: "Michael Brown", role: "Member", status: "active", joinDate: "2023-03-20" },
+                        { id: 6, name: "Emily Davis", role: "Member", status: "inactive", joinDate: "2021-05-15" }
+                    ],
+                    history: [
+                        { date: "2018-09-15", title: "Club Founded", description: "Technology Club was officially founded with 12 members." },
+                        { date: "2019-05-20", title: "First Hackathon", description: "Organized our first 24-hour hackathon with 50 participants." },
+                        { date: "2020-03-10", title: "Online Transition", description: "Successfully transitioned to online meetings during pandemic." },
+                        { date: "2021-11-05", title: "100th Member Milestone", description: "Reached 100 active members milestone." },
+                        { date: "2023-01-15", title: "New Lab Opened", description: "Opened new technology lab with state-of-the-art equipment." }
+                    ],
+                    activities: [
+                        { id: 1, title: "Web Development Workshop", date: "2023-10-25", time: "6:00 PM", location: "Main Campus Lab", description: "Learn HTML, CSS, and JavaScript basics.", attendees: 45 },
+                        { id: 2, title: "AI & Machine Learning Talk", date: "2023-11-08", time: "7:30 PM", location: "Tech Building Room 101", description: "Guest speaker from TechCorp discussing AI trends.", attendees: 0 },
+                        { id: 3, title: "Annual Hackathon", date: "2023-11-25", time: "9:00 AM", location: "Student Union", description: "24-hour coding competition with prizes.", attendees: 0 },
+                        { id: 4, title: "Mobile App Development", date: "2023-09-15", time: "5:00 PM", location: "Online", description: "Workshop on building cross-platform mobile apps.", attendees: 38 }
+                    ],
+                    recentActivity: [
+                        { type: "member_joined", title: "New Member Joined", description: "Michael Brown joined the club", time: "2 days ago" },
+                        { type: "event_created", title: "Event Created", description: "AI & Machine Learning Talk scheduled for Nov 8", time: "5 days ago" },
+                        { type: "meeting_held", title: "Monthly Meeting", description: "October monthly meeting with 42 attendees", time: "1 week ago" },
+                        { type: "achievement", title: "Project Completed", description: "Club website redesign completed", time: "2 weeks ago" }
+                    ]
+                },
+                {
+                    id: "artists",
+                    name: "Artists Collective",
+                    password: "password123",
+                    description: "A community for artists of all mediums to collaborate and showcase their work.",
+                    founded: "2016",
+                    totalMembers: 89,
+                    activeMembers: 72,
+                    upcomingEvents: 2,
+                    activityLevel: "78%",
+                    contactEmail: "artists@example.com",
+                    website: "https://artists.example.com",
+                    meetingSchedule: "Every Friday at 5 PM"
+                },
+                {
+                    id: "sports",
+                    name: "Sports & Fitness Club",
+                    password: "password123",
+                    description: "Promoting health, fitness, and sports activities for all skill levels.",
+                    founded: "2019",
+                    totalMembers: 210,
+                    activeMembers: 185,
+                    upcomingEvents: 4,
+                    activityLevel: "92%",
+                    contactEmail: "sports@example.com",
+                    website: "https://sports.example.com",
+                    meetingSchedule: "Every Monday and Thursday at 6 PM"
+                },
+                {
+                    id: "science",
+                    name: "Science Society",
+                    password: "password123",
+                    description: "Exploring scientific discoveries and conducting experiments together.",
+                    founded: "2015",
+                    totalMembers: 124,
+                    activeMembers: 108,
+                    upcomingEvents: 1,
+                    activityLevel: "81%",
+                    contactEmail: "science@example.com",
+                    website: "https://science.example.com",
+                    meetingSchedule: "Every Tuesday at 4 PM"
+                }
+            ]
+        };
+
+        // Compact Horizontal Necklace Navigation Setup
+        const necklaceTrack = document.getElementById('necklaceTrack');
+        const totalBulletins = 8;
+        let activeBulletin = 1;
+        let visiblePearls = 5; // Number of pearls visible at once
+        let autoRotateInterval;
+        
+        // Mobile menu elements
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sideMenu = document.getElementById('sideMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
+        
+        // Dashboard elements
+        const signinModal = document.getElementById('signinModal');
+        const signinBtn = document.getElementById('signinBtn');
+        const adminDashboard = document.getElementById('adminDashboard');
+        const clubDashboard = document.getElementById('clubDashboard');
+        
+        // Current club data
+        let currentClub = null;
+
+        // Initialize necklace with compact horizontal layout
+        function initializeNecklace() {
+            // Clear existing pearls
+            necklaceTrack.innerHTML = '';
+            
+            // Create all pearls in order
+            for (let i = 1; i <= totalBulletins; i++) {
+                const isActive = i === activeBulletin;
+                const pearl = document.createElement('div');
+                pearl.className = isActive ? 'center-pearl' : 'outer-pearl';
+                pearl.dataset.bulletin = i;
+                pearl.innerHTML = `
+                    <div class="${isActive ? 'center-number' : 'pearl-number'}">${i}</div>
+                    <div class="${isActive ? 'center-label' : 'pearl-label'}">Board ${i}</div>
+                `;
+                
+                // Add click event
+                pearl.addEventListener('click', () => {
+                    selectBulletin(i);
+                });
+                
+                necklaceTrack.appendChild(pearl);
+            }
+            
+            // Position pearls to show active in center
+            positionPearls();
+            
+            // Update current bulletin indicator
+            updateCurrentBulletin();
+        }
+        
+        // Position pearls to show active in center
+        function positionPearls() {
+            const pearls = necklaceTrack.querySelectorAll('.center-pearl, .outer-pearl');
+            const activeIndex = activeBulletin - 1;
+            
+            // Calculate which pearls should be visible
+            const halfVisible = Math.floor(visiblePearls / 2);
+            let startIndex = activeIndex - halfVisible;
+            let endIndex = activeIndex + halfVisible;
+            
+            // Adjust for boundaries
+            if (startIndex < 0) {
+                endIndex += Math.abs(startIndex);
+                startIndex = 0;
+            }
+            if (endIndex >= totalBulletins) {
+                startIndex -= (endIndex - totalBulletins + 1);
+                endIndex = totalBulletins - 1;
+            }
+            
+            // Reset all pearls first
+            pearls.forEach((pearl, index) => {
+                pearl.style.display = 'flex';
+                pearl.style.opacity = '0.7';
+                pearl.style.transform = 'scale(0.8)';
+                
+                // Hide pearls outside visible range
+                if (index < startIndex || index > endIndex) {
+                    pearl.style.display = 'none';
+                }
+            });
+            
+            // Style visible pearls based on position relative to center
+            for (let i = startIndex; i <= endIndex; i++) {
+                const pearl = pearls[i];
+                const distanceFromCenter = Math.abs(i - activeIndex);
+                const scale = 1 - (distanceFromCenter * 0.2);
+                const opacity = 1 - (distanceFromCenter * 0.3);
+                
+                if (i === activeIndex) {
+                    pearl.className = 'center-pearl';
+                    pearl.style.opacity = '1';
+                    pearl.style.transform = 'scale(1)';
+                } else {
+                    pearl.className = 'outer-pearl';
+                    pearl.style.opacity = opacity.toString();
+                    pearl.style.transform = `scale(${scale})`;
+                }
+            }
+        }
+        
+        // Update current bulletin indicator
+        function updateCurrentBulletin() {
+            document.getElementById('currentBulletin').textContent = activeBulletin;
+        }
+        
+        // Select bulletin function
+        function selectBulletin(id) {
+            activeBulletin = id;
+            
+            // Update navigation states
+            updateNavigationStates();
+            
+            // Update necklace display
+            initializeNecklace();
+            
+            // Update content display
+            updateDisplay(id);
+            
+            // Reset auto-rotate timer
+            resetAutoRotate();
+        }
+        
+        // Update all navigation states (header, side menu)
+        function updateNavigationStates() {
+            // Update header nav items
+            document.querySelectorAll('.header-nav-item').forEach(item => {
+                if (parseInt(item.dataset.bulletin) === activeBulletin) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+            
+            // Update side menu items
+            document.querySelectorAll('.side-menu-item').forEach(item => {
+                if (parseInt(item.dataset.bulletin) === activeBulletin) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+        
+        // Navigation controls
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            let newBulletin = activeBulletin - 1;
+            if (newBulletin < 1) newBulletin = totalBulletins;
+            selectBulletin(newBulletin);
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            let newBulletin = activeBulletin + 1;
+            if (newBulletin > totalBulletins) newBulletin = 1;
+            selectBulletin(newBulletin);
+        });
+
+        // Header nav links
+        document.querySelectorAll('.header-nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const bulletinId = parseInt(item.dataset.bulletin);
+                selectBulletin(bulletinId);
+            });
+        });
+        
+        // Footer links
+        document.querySelectorAll('.footer-links a[data-bulletin]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const bulletinId = parseInt(link.dataset.bulletin);
+                selectBulletin(bulletinId);
+            });
+        });
+
+        // Mobile menu functionality
+        mobileMenuBtn.addEventListener('click', () => {
+            sideMenu.classList.add('active');
+            menuOverlay.classList.add('active');
+        });
+        
+        menuOverlay.addEventListener('click', () => {
+            sideMenu.classList.remove('active');
+            menuOverlay.classList.remove('active');
+        });
+        
+        // Side menu items
+        document.querySelectorAll('.side-menu-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const bulletinId = parseInt(item.dataset.bulletin);
+                selectBulletin(bulletinId);
+                
+                // Close side menu
+                sideMenu.classList.remove('active');
+                menuOverlay.classList.remove('active');
+            });
+        });
+        
+        // Auto-rotate function
+        function startAutoRotate() {
+            autoRotateInterval = setInterval(() => {
+                let newBulletin = activeBulletin + 1;
+                if (newBulletin > totalBulletins) newBulletin = 1;
+                selectBulletin(newBulletin);
+            }, 15000); // Rotate every 15 seconds
+        }
+        
+        // Reset auto-rotate timer
+        function resetAutoRotate() {
+            clearInterval(autoRotateInterval);
+            startAutoRotate();
+        }
+
+        // Update display based on selected bulletin
+        function updateDisplay(bulletinId) {
+            const bulletin = platformData.bulletins.find(b => b.id === bulletinId);
+            const displayTitle = document.getElementById('displayTitle');
+            const displayContent = document.getElementById('displayContent');
+            
+            displayTitle.textContent = bulletin.title;
+            
+            switch(bulletin.type) {
+                case 'scrolling':
+                    displayContent.innerHTML = `
+                        <div class="bulletin-1">
+                            <div class="scrolling-bg"></div>
+                            <div class="story-display">
+                                <h3 class="mb-2">${platformData.stories[0].title}</h3>
+                                <p class="mb-2">${platformData.stories[0].content}</p>
+                                <p>Bulletin ${bulletinId} is now in the center. The other bulletins are arranged around it. Click on any outer pearl to bring it to the center.</p>
+                            </div>
+                            <div class="number-display">
+                                <div>${bulletin.number}</div>
+                                <div class="number-label">Total</div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'years':
+                    displayContent.innerHTML = `
+                        <h3 class="mb-3">${bulletin.title}</h3>
+                        <p class="mb-3">Select a year to view its story. Stories that are too long will show a scrollbar.</p>
+                        <div class="year-nav" id="yearNav"></div>
+                        <div class="story-container" id="yearStory"></div>
+                    `;
+                    
+                    const yearNav = document.getElementById('yearNav');
+                    const yearStory = document.getElementById('yearStory');
+                    
+                    // Create year buttons
+                    bulletin.years.forEach((year, index) => {
+                        const yearBtn = document.createElement('div');
+                        yearBtn.className = index === 0 ? 'year-btn active' : 'year-btn';
+                        yearBtn.textContent = year;
+                        yearBtn.dataset.year = year;
+                        
+                        yearBtn.addEventListener('click', () => {
+                            document.querySelectorAll('.year-btn').forEach(btn => btn.classList.remove('active'));
+                            yearBtn.classList.add('active');
+                            
+                            // Show story for selected year
+                            const storyIndex = year === 2023 ? 2 : 3;
+                            yearStory.innerHTML = `
+                                <h3 class="mb-2">${platformData.stories[storyIndex].title}</h3>
+                                <p class="mb-2">${platformData.stories[storyIndex].content}</p>
+                                <p>This content is for year ${year}.</p>
+                            `;
+                        });
+                        
+                        yearNav.appendChild(yearBtn);
+                    });
+                    
+                    // Trigger click on first year
+                    if (yearNav.querySelector('.year-btn')) {
+                        yearNav.querySelector('.year-btn').click();
+                    }
+                    break;
+                    
+                case 'mixed':
+                    displayContent.innerHTML = `
+                        <h3 class="mb-3">${bulletin.title}</h3>
+                        <p class="mb-3">This bulletin contains a featured story and three sets of cards. Use the buttons below to switch between them.</p>
+                        <div class="year-nav mb-4">
+                            <div class="year-btn active" data-content="story">Featured Story</div>
+                            <div class="year-btn" data-content="cards1">Card Set 1</div>
+                            <div class="year-btn" data-content="cards2">Card Set 2</div>
+                            <div class="year-btn" data-content="cards3">Card Set 3</div>
+                        </div>
+                        <div id="mixedContent">
+                            <div class="story-container">
+                                <h3 class="mb-2">${platformData.stories[1].title}</h3>
+                                <p>${platformData.stories[1].content}</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Add event listeners to buttons
+                    document.querySelectorAll('#displayContent .year-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            document.querySelectorAll('#displayContent .year-btn').forEach(b => b.classList.remove('active'));
+                            btn.classList.add('active');
+                            
+                            const contentDiv = document.getElementById('mixedContent');
+                            const contentType = btn.dataset.content;
+                            
+                            if (contentType === 'story') {
+                                contentDiv.innerHTML = `
+                                    <div class="story-container">
+                                        <h3 class="mb-2">${platformData.stories[1].title}</h3>
+                                        <p>${platformData.stories[1].content}</p>
+                                    </div>
+                                `;
+                            } else {
+                                const cardSet = contentType === 'cards1' ? 1 : contentType === 'cards2' ? 2 : 3;
+                                const cardCount = cardSet === 1 ? 3 : cardSet === 2 ? 8 : 5;
+                                
+                                contentDiv.innerHTML = `
+                                    <div class="cards-container">
+                                        ${Array.from({length: cardCount}, (_, i) => `
+                                            <div class="card">
+                                                <div class="card-header">Card ${i+1} of Set ${cardSet}</div>
+                                                <div class="card-body">
+                                                    <p>This is card ${i+1} from card set ${cardSet}.</p>
+                                                    <p>Each card can contain text, images, or links to other content.</p>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                `;
+                            }
+                        });
+                    });
+                    break;
+                    
+                case 'cards':
+                    // Determine how many cards to show initially
+                    const initialCards = Math.min(bulletin.count, window.innerWidth >= 768 ? 12 : 6);
+                    
+                    displayContent.innerHTML = `
+                        <h3 class="mb-3">${bulletin.title}</h3>
+                        <p class="mb-3">This bulletin contains ${bulletin.count} cards. ${bulletin.count > initialCards ? `Showing ${initialCards} cards - scroll to see all.` : 'All cards are visible below.'}</p>
+                        <div class="cards-container">
+                            ${Array.from({length: initialCards}, (_, i) => `
+                                <div class="card" data-card="${i+1}">
+                                    <div class="card-header">Card ${i+1}</div>
+                                    <div class="card-body">
+                                        <p>This is card ${i+1} of ${bulletin.count}.</p>
+                                        <p>Each card can be clicked to view details or sign in to its dashboard.</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        ${bulletin.count > initialCards ? `<p class="mt-3 text-center" style="color: var(--gray);">... and ${bulletin.count - initialCards} more cards (scroll to see all)</p>` : ''}
+                    `;
+                    
+                    // Add click events to cards
+                    document.querySelectorAll('.card').forEach((card, index) => {
+                        card.addEventListener('click', () => {
+                            // Try to find a matching club for this card
+                            const clubIndex = (index % platformData.clubs.length);
+                            const club = platformData.clubs[clubIndex];
+                            alert(`Card ${index + 1} clicked. This would show details for ${club.name}. Try signing in with username "${club.id}" and password "password123".`);
+                        });
+                    });
+                    break;
+                    
+                case 'contact':
+                    displayContent.innerHTML = `
+                        <h3 class="mb-3">${bulletin.title}</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem;">
+                            <div>
+                                <h4 class="mb-2">Get in Touch</h4>
+                                <p>Email: info@centernecklace.com</p>
+                                <p>Phone: +1 (555) 123-4567</p>
+                                <p>Address: 123 Innovation Drive, Tech City</p>
+                                
+                                <div class="mt-4">
+                                    <h4 class="mb-2">Sub-pages</h4>
+                                    <div class="year-nav">
+                                        <div class="year-btn active">Donation</div>
+                                        <div class="year-btn">Volunteer</div>
+                                    </div>
+                                    
+                                    <div class="story-container mt-3" id="contactSubpage">
+                                        <h5>Donation Information</h5>
+                                        <p>Your support helps us maintain and improve the CenterNecklace platform.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h4 class="mb-2">Send Message</h4>
+                                <form class="contact-form" style="display: flex; flex-direction: column; gap: 1rem;">
+                                    <input type="text" class="form-input" placeholder="Your Name" style="padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;">
+                                    <input type="email" class="form-input" placeholder="Your Email" style="padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;">
+                                    <textarea class="form-input" rows="5" placeholder="Your Message" style="padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;"></textarea>
+                                    <button type="button" class="btn btn-primary">Send Message</button>
+                                </form>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Add event listeners to contact subpage buttons
+                    document.querySelectorAll('#displayContent .year-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            document.querySelectorAll('#displayContent .year-btn').forEach(b => b.classList.remove('active'));
+                            btn.classList.add('active');
+                            
+                            const subpageContent = document.getElementById('contactSubpage');
+                            if (btn.textContent === 'Donation') {
+                                subpageContent.innerHTML = `
+                                    <h5>Donation Information</h5>
+                                    <p>Your support helps us maintain and improve the CenterNecklace platform. We accept donations via credit card, bank transfer, or cryptocurrency.</p>
+                                `;
+                            } else {
+                                subpageContent.innerHTML = `
+                                    <h5>Volunteer Opportunities</h5>
+                                    <p>We're always looking for volunteers to help with content management, event organization, and community outreach.</p>
+                                `;
+                            }
+                        });
+                    });
+                    break;
+            }
+        }
+
+        // Sign-in Modal Functionality
+        signinBtn.addEventListener('click', () => {
+            signinModal.classList.add('active');
+        });
+        
+        // Close modal
+        document.getElementById('closeModal').addEventListener('click', () => {
+            signinModal.classList.remove('active');
+        });
+        
+        // Close modal when clicking outside
+        signinModal.addEventListener('click', (e) => {
+            if (e.target === signinModal) {
+                signinModal.classList.remove('active');
+            }
+        });
+        
+        // Sign-in tabs
+        document.querySelectorAll('.signin-tab-btn').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.signin-tab-btn').forEach(t => {
+                    t.classList.remove('active');
+                    t.style.borderBottom = 'none';
+                    t.style.color = 'var(--gray)';
+                });
+                tab.classList.add('active');
+                tab.style.borderBottom = '3px solid var(--accent)';
+                tab.style.color = 'var(--primary)';
+                
+                document.getElementById('adminSigninForm').classList.toggle('hidden', tab.dataset.tab !== 'admin');
+                document.getElementById('clubSigninForm').classList.toggle('hidden', tab.dataset.tab !== 'club');
+            });
+        });
+        
+        // Admin sign-in
+        document.getElementById('adminSigninBtn').addEventListener('click', () => {
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+            
+            if (username && password) {
+                if (username === "admin") {
+                    signinModal.classList.remove('active');
+                    document.body.style.overflow = 'hidden';
+                    adminDashboard.classList.remove('hidden');
+                    
+                    // Update sign-in button
+                    signinBtn.innerHTML = `<i class="fas fa-user-shield"></i> Admin`;
+                    signinBtn.style.background = 'linear-gradient(135deg, #00c853, #64dd17)';
+                    signinBtn.style.color = 'white';
+                    
+                    // Initialize admin dashboard navigation
+                    setupAdminDashboard();
+                } else {
+                    alert('Invalid admin credentials. Try "admin" as username with any password.');
+                }
+            } else {
+                alert('Please enter admin username and password');
+            }
+        });
+        
+        // Club sign-in
+        document.getElementById('clubSigninBtn').addEventListener('click', () => {
+            const clubId = document.getElementById('clubId').value.toLowerCase();
+            const password = document.getElementById('clubPassword').value;
+            
+            if (clubId && password) {
+                // Find club in database
+                const club = platformData.clubs.find(c => c.id === clubId);
+                
+                if (club && club.password === password) {
+                    currentClub = club;
+                    signinModal.classList.remove('active');
+                    document.body.style.overflow = 'hidden';
+                    clubDashboard.classList.remove('hidden');
+                    
+                    // Update club name in dashboard
+                    document.getElementById('clubName').textContent = `${club.name} Dashboard`;
+                    document.getElementById('clubTitle').textContent = `${club.name} Dashboard`;
+                    document.getElementById('clubHeaderName').textContent = club.name;
+                    document.getElementById('clubDescription').textContent = club.description || '';
+                    
+                    // Update sign-in button
+                    signinBtn.innerHTML = `<i class="fas fa-users"></i> ${club.name}`;
+                    signinBtn.style.background = 'linear-gradient(135deg, #ff9100, #ffab00)';
+                    signinBtn.style.color = 'white';
+                    
+                    // Load club data
+                    loadClubDashboard(club);
+                    
+                    // Initialize club dashboard navigation
+                    setupClubDashboard();
+                } else {
+                    alert('Invalid club credentials. Try: techclub, artists, sports, or science with password "password123"');
+                }
+            } else {
+                alert('Please enter club ID and password');
+            }
+        });
+        
+        // Load club dashboard data
+        function loadClubDashboard(club) {
+            // Update stats
+            document.getElementById('totalMembers').textContent = club.totalMembers || 0;
+            document.getElementById('activeMembers').textContent = club.activeMembers || 0;
+            document.getElementById('upcomingEvents').textContent = club.upcomingEvents || 0;
+            document.getElementById('activityLevel').textContent = club.activityLevel || "0%";
+            
+            // Update changes
+            const memberChange = Math.floor(Math.random() * 10) + 1;
+            const activeChange = Math.floor(Math.random() * 5) + 1;
+            const activityChange = Math.floor(Math.random() * 15) + 5;
+            
+            document.getElementById('memberChange').textContent = `+${memberChange} this month`;
+            document.getElementById('activeChange').textContent = `+${activeChange} this week`;
+            document.getElementById('activityChange').textContent = `+${activityChange}% from last month`;
+            
+            // Load recent activity
+            const recentActivity = document.getElementById('recentActivity');
+            recentActivity.innerHTML = '';
+            
+            const activities = club.recentActivity || [
+                { type: 'default', title: 'Welcome to Club Dashboard', description: 'Start managing your club activities', time: 'Just now' }
+            ];
+            
+            activities.forEach(activity => {
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item';
+                
+                let icon = 'fas fa-bell';
+                if (activity.type === 'member_joined') icon = 'fas fa-user-plus';
+                if (activity.type === 'event_created') icon = 'fas fa-calendar-plus';
+                if (activity.type === 'meeting_held') icon = 'fas fa-users';
+                if (activity.type === 'achievement') icon = 'fas fa-trophy';
+                
+                activityItem.innerHTML = `
+                    <div class="activity-icon">
+                        <i class="${icon}"></i>
+                    </div>
+                    <div class="activity-details">
+                        <div class="activity-title">${activity.title}</div>
+                        <div class="activity-description" style="font-size: 0.9rem; color: #666; margin-bottom: 0.2rem;">${activity.description}</div>
+                        <div class="activity-time">${activity.time}</div>
+                    </div>
+                `;
+                
+                recentActivity.appendChild(activityItem);
+            });
+            
+            // Load upcoming events
+            const eventsContainer = document.querySelector('#clubDashboardContent .cards-container');
+            eventsContainer.innerHTML = '';
+            
+            const events = club.activities || [];
+            const upcomingEvents = events.filter(e => new Date(e.date) >= new Date()).slice(0, 3);
+            
+            if (upcomingEvents.length > 0) {
+                document.getElementById('nextEventDate').textContent = new Date(upcomingEvents[0].date).toLocaleDateString();
+                
+                upcomingEvents.forEach(event => {
+                    const eventCard = document.createElement('div');
+                    eventCard.className = 'card';
+                    
+                    eventCard.innerHTML = `
+                        <div class="card-header">${event.title}</div>
+                        <div class="card-body">
+                            <p><strong>Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
+                            <p><strong>Time:</strong> ${event.time}</p>
+                            <p><strong>Location:</strong> ${event.location}</p>
+                            <p>${event.description}</p>
+                            <p><strong>Attendees:</strong> ${event.attendees || 0}</p>
+                        </div>
+                    `;
+                    
+                    eventsContainer.appendChild(eventCard);
+                });
+            } else {
+                eventsContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666;">No upcoming events scheduled</p>';
+                document.getElementById('nextEventDate').textContent = 'None scheduled';
+            }
+            
+            // Load members (if data exists)
+            if (club.members) {
+                // This will be used when members section is loaded
+                window.clubMembersData = club.members;
+            }
+            
+            // Load history (if data exists)
+            if (club.history) {
+                window.clubHistoryData = club.history;
+            }
+            
+            // Load activities (if data exists)
+            if (club.activities) {
+                window.clubActivitiesData = club.activities;
+            }
+            
+            // Load settings data
+            document.getElementById('settingsClubName').value = club.name;
+            document.getElementById('settingsClubDescription').value = club.description || '';
+            document.getElementById('settingsClubEmail').value = club.contactEmail || '';
+            document.getElementById('settingsClubWebsite').value = club.website || '';
+            document.getElementById('settingsMeetingSchedule').value = club.meetingSchedule || '';
+        }
+        
+        // Admin dashboard navigation setup
+        function setupAdminDashboard() {
+            // Admin nav items
+            document.querySelectorAll('.admin-nav-item[data-admin-section]').forEach(item => {
+                item.addEventListener('click', () => {
+                    // Remove active class from all
+                    document.querySelectorAll('.admin-nav-item').forEach(i => i.classList.remove('active'));
+                    // Add active to clicked
+                    item.classList.add('active');
+                    
+                    // Show appropriate content
+                    const section = item.dataset.adminSection;
+                    
+                    // Hide all content sections first
+                    document.getElementById('adminDashboardContent').classList.add('hidden');
+                    document.getElementById('adminManageBulletins')?.classList.add('hidden');
+                    document.getElementById('adminManageStories')?.classList.add('hidden');
+                    document.getElementById('adminManageCardSets')?.classList.add('hidden');
+                    
+                    // Show selected section
+                    if (section === 'dashboard') {
+                        document.getElementById('adminDashboardContent').classList.remove('hidden');
+                    } else if (section === 'bulletins') {
+                        document.getElementById('adminManageBulletins')?.classList.remove('hidden');
+                    } else if (section === 'stories') {
+                        document.getElementById('adminManageStories')?.classList.remove('hidden');
+                    } else if (section === 'cardsets') {
+                        document.getElementById('adminManageCardSets')?.classList.remove('hidden');
+                    }
+                });
+            });
+        }
+        
+        // Club dashboard navigation setup
+        function setupClubDashboard() {
+            // Club nav items
+            document.querySelectorAll('.admin-nav-item[data-club-section]').forEach(item => {
+                item.addEventListener('click', () => {
+                    // Remove active class from all
+                    document.querySelectorAll('.admin-nav-item').forEach(i => i.classList.remove('active'));
+                    // Add active to clicked
+                    item.classList.add('active');
+                    
+                    // Show appropriate content
+                    const section = item.dataset.clubSection;
+                    
+                    // Hide all content sections first
+                    document.getElementById('clubDashboardContent').classList.add('hidden');
+                    document.getElementById('clubMembers')?.classList.add('hidden');
+                    document.getElementById('clubHistory')?.classList.add('hidden');
+                    document.getElementById('clubActivities')?.classList.add('hidden');
+                    document.getElementById('clubSettings')?.classList.add('hidden');
+                    
+                    // Show selected section
+                    if (section === 'home') {
+                        document.getElementById('clubDashboardContent').classList.remove('hidden');
+                    } else if (section === 'members') {
+                        document.getElementById('clubMembers').classList.remove('hidden');
+                        loadMembersSection();
+                    } else if (section === 'history') {
+                        document.getElementById('clubHistory').classList.remove('hidden');
+                        loadHistorySection();
+                    } else if (section === 'activities') {
+                        document.getElementById('clubActivities').classList.remove('hidden');
+                        loadActivitiesSection();
+                    } else if (section === 'settings') {
+                        document.getElementById('clubSettings').classList.remove('hidden');
+                    }
+                });
+            });
+            
+            // Add Member button
+            document.getElementById('addMemberBtn')?.addEventListener('click', () => {
+                const name = prompt("Enter new member's name:");
+                if (name) {
+                    const role = prompt("Enter member's role:");
+                    const status = confirm("Is this member active?") ? "active" : "inactive";
+                    
+                    // Generate a new ID
+                    const newId = window.clubMembersData ? window.clubMembersData.length + 1 : 1;
+                    
+                    if (!window.clubMembersData) window.clubMembersData = [];
+                    
+                    window.clubMembersData.push({
+                        id: newId,
+                        name: name,
+                        role: role || "Member",
+                        status: status,
+                        joinDate: new Date().toISOString().split('T')[0]
+                    });
+                    
+                    alert(`Member ${name} added successfully!`);
+                    loadMembersSection();
+                }
+            });
+            
+            // Add Activity button
+            document.getElementById('addActivityBtn')?.addEventListener('click', () => {
+                const title = prompt("Enter activity title:");
+                if (title) {
+                    const date = prompt("Enter date (YYYY-MM-DD):", new Date().toISOString().split('T')[0]);
+                    const time = prompt("Enter time:", "6:00 PM");
+                    const location = prompt("Enter location:");
+                    const description = prompt("Enter description:");
+                    
+                    if (!window.clubActivitiesData) window.clubActivitiesData = [];
+                    
+                    window.clubActivitiesData.push({
+                        id: window.clubActivitiesData.length + 1,
+                        title: title,
+                        date: date,
+                        time: time,
+                        location: location || "TBD",
+                        description: description || "",
+                        attendees: 0
+                    });
+                    
+                    alert(`Activity "${title}" added successfully!`);
+                    loadActivitiesSection();
+                }
+            });
+            
+            // Save Settings button
+            document.getElementById('saveSettingsBtn')?.addEventListener('click', () => {
+                const newPassword = document.getElementById('settingsNewPassword').value;
+                const confirmPassword = document.getElementById('settingsConfirmPassword').value;
+                
+                if (newPassword && newPassword !== confirmPassword) {
+                    alert("Passwords don't match!");
+                    return;
+                }
+                
+                // Update club data
+                if (currentClub) {
+                    currentClub.name = document.getElementById('settingsClubName').value;
+                    currentClub.description = document.getElementById('settingsClubDescription').value;
+                    currentClub.contactEmail = document.getElementById('settingsClubEmail').value;
+                    currentClub.website = document.getElementById('settingsClubWebsite').value;
+                    currentClub.meetingSchedule = document.getElementById('settingsMeetingSchedule').value;
+                    
+                    if (newPassword) {
+                        currentClub.password = newPassword;
+                    }
+                    
+                    // Update UI
+                    document.getElementById('clubName').textContent = `${currentClub.name} Dashboard`;
+                    document.getElementById('clubTitle').textContent = `${currentClub.name} Dashboard`;
+                    document.getElementById('clubHeaderName').textContent = currentClub.name;
+                    document.getElementById('clubDescription').textContent = currentClub.description;
+                    
+                    // Update sign-in button
+                    signinBtn.innerHTML = `<i class="fas fa-users"></i> ${currentClub.name}`;
+                    
+                    alert("Settings saved successfully!");
+                }
+            });
+            
+            // Member filters
+            document.querySelectorAll('#clubMembers .year-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('#clubMembers .year-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    loadMembersSection(btn.dataset.filter);
+                });
+            });
+            
+            // Activity filters
+            document.querySelectorAll('#clubActivities .year-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('#clubActivities .year-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    loadActivitiesSection(btn.dataset.filter);
+                });
+            });
+        }
+        
+        // Load members section
+        function loadMembersSection(filter = 'all') {
+            const membersGrid = document.getElementById('membersGrid');
+            membersGrid.innerHTML = '';
+            
+            const members = window.clubMembersData || [
+                { id: 1, name: "Sample Member", role: "Member", status: "active", joinDate: "2023-01-01" }
+            ];
+            
+            // Filter members
+            let filteredMembers = members;
+            if (filter === 'active') {
+                filteredMembers = members.filter(m => m.status === 'active');
+            } else if (filter === 'inactive') {
+                filteredMembers = members.filter(m => m.status === 'inactive');
+            } else if (filter === 'leadership') {
+                filteredMembers = members.filter(m => 
+                    m.role.toLowerCase().includes('president') || 
+                    m.role.toLowerCase().includes('vice') ||
+                    m.role.toLowerCase().includes('treasurer') ||
+                    m.role.toLowerCase().includes('secretary') ||
+                    m.role.toLowerCase().includes('leader') ||
+                    m.role.toLowerCase().includes('coordinator')
+                );
+            }
+            
+            if (filteredMembers.length === 0) {
+                membersGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666;">No members found</p>';
+                return;
+            }
+            
+            filteredMembers.forEach(member => {
+                const firstLetter = member.name.charAt(0).toUpperCase();
+                const memberCard = document.createElement('div');
+                memberCard.className = 'member-card';
+                
+                memberCard.innerHTML = `
+                    <div class="member-avatar">${firstLetter}</div>
+                    <div class="member-name">${member.name}</div>
+                    <div class="member-role">${member.role}</div>
+                    <div class="member-status ${member.status}">${member.status.toUpperCase()}</div>
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #999;">
+                        Joined: ${new Date(member.joinDate).toLocaleDateString()}
+                    </div>
+                `;
+                
+                // Add click event to edit member
+                memberCard.addEventListener('click', () => {
+                    const newRole = prompt(`Edit ${member.name}'s role:`, member.role);
+                    if (newRole !== null) {
+                        member.role = newRole;
+                        const newStatus = confirm(`Is ${member.name} active?`) ? "active" : "inactive";
+                        member.status = newStatus;
+                        loadMembersSection(filter);
+                    }
+                });
+                
+                membersGrid.appendChild(memberCard);
+            });
+        }
+        
+        // Load history section
+        function loadHistorySection() {
+            const timeline = document.getElementById('clubTimeline');
+            timeline.innerHTML = '';
+            
+            const history = window.clubHistoryData || [
+                { date: "2023-01-01", title: "Club Established", description: "The club was officially founded." }
+            ];
+            
+            // Sort by date (newest first)
+            history.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            history.forEach(event => {
+                const timelineEvent = document.createElement('div');
+                timelineEvent.className = 'timeline-event';
+                
+                timelineEvent.innerHTML = `
+                    <div class="timeline-date">${new Date(event.date).toLocaleDateString()}</div>
+                    <div class="timeline-title">${event.title}</div>
+                    <div>${event.description}</div>
+                `;
+                
+                timeline.appendChild(timelineEvent);
+            });
+            
+            // Add "Add Event" button
+            const addButton = document.createElement('button');
+            addButton.className = 'btn btn-primary mt-4';
+            addButton.innerHTML = '<i class="fas fa-plus"></i> Add Historical Event';
+            addButton.addEventListener('click', () => {
+                const title = prompt("Enter event title:");
+                if (title) {
+                    const date = prompt("Enter date (YYYY-MM-DD):", new Date().toISOString().split('T')[0]);
+                    const description = prompt("Enter description:");
+                    
+                    if (!window.clubHistoryData) window.clubHistoryData = [];
+                    
+                    window.clubHistoryData.push({
+                        date: date,
+                        title: title,
+                        description: description || ""
+                    });
+                    
+                    loadHistorySection();
+                }
+            });
+            
+            timeline.appendChild(addButton);
+        }
+        
+        // Load activities section
+        function loadActivitiesSection(filter = 'upcoming') {
+            const activitiesGrid = document.getElementById('activitiesGrid');
+            activitiesGrid.innerHTML = '';
+            
+            const activities = window.clubActivitiesData || [];
+            
+            // Filter activities
+            let filteredActivities = activities;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            if (filter === 'upcoming') {
+                filteredActivities = activities.filter(a => new Date(a.date) >= today);
+            } else if (filter === 'past') {
+                filteredActivities = activities.filter(a => new Date(a.date) < today);
+            }
+            
+            // Sort by date
+            filteredActivities.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            if (filteredActivities.length === 0) {
+                activitiesGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666;">No activities found</p>';
+                return;
+            }
+            
+            filteredActivities.forEach(activity => {
+                const eventCard = document.createElement('div');
+                eventCard.className = 'card';
+                
+                const isPast = new Date(activity.date) < today;
+                
+                eventCard.innerHTML = `
+                    <div class="card-header">${activity.title}</div>
+                    <div class="card-body">
+                        <p><strong>Date:</strong> ${new Date(activity.date).toLocaleDateString()} ${isPast ? '(Past)' : ''}</p>
+                        <p><strong>Time:</strong> ${activity.time}</p>
+                        <p><strong>Location:</strong> ${activity.location}</p>
+                        <p>${activity.description}</p>
+                        <p><strong>Attendees:</strong> ${activity.attendees || 0}</p>
+                        <button class="btn btn-primary mt-2" style="padding: 0.5rem 1rem; font-size: 0.9rem;" data-id="${activity.id}">
+                            <i class="fas fa-user-check"></i> Mark Attendance
+                        </button>
+                    </div>
+                `;
+                
+                // Add attendance button event
+                const attendBtn = eventCard.querySelector('button');
+                attendBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const count = prompt("Enter number of attendees:", activity.attendees || "0");
+                    if (count !== null) {
+                        activity.attendees = parseInt(count) || 0;
+                        loadActivitiesSection(filter);
+                    }
+                });
+                
+                // Add click event to edit activity
+                eventCard.addEventListener('click', () => {
+                    const newTitle = prompt("Edit activity title:", activity.title);
+                    if (newTitle !== null) {
+                        activity.title = newTitle;
+                        const newDate = prompt("Edit date (YYYY-MM-DD):", activity.date);
+                        if (newDate !== null) activity.date = newDate;
+                        const newTime = prompt("Edit time:", activity.time);
+                        if (newTime !== null) activity.time = newTime;
+                        loadActivitiesSection(filter);
+                    }
+                });
+                
+                activitiesGrid.appendChild(eventCard);
+            });
+        }
+        
+        // Logout functionality
+        document.getElementById('logoutAdmin')?.addEventListener('click', () => {
+            adminDashboard.classList.add('hidden');
+            document.body.style.overflow = '';
+            signinBtn.innerHTML = `<i class="fas fa-sign-in-alt"></i> Sign In`;
+            signinBtn.style.background = '';
+            signinBtn.style.color = 'white';
+        });
+        
+        document.getElementById('logoutClub')?.addEventListener('click', () => {
+            clubDashboard.classList.add('hidden');
+            document.body.style.overflow = '';
+            signinBtn.innerHTML = `<i class="fas fa-sign-in-alt"></i> Sign In`;
+            signinBtn.style.background = '';
+            signinBtn.style.color = 'white';
+            currentClub = null;
+        });
+        
+        // Admin and club links in footer
+        document.getElementById('adminLinkFooter').addEventListener('click', (e) => {
+            e.preventDefault();
+            signinModal.classList.add('active');
+            document.querySelector('.signin-tab-btn[data-tab="admin"]').click();
+        });
+        
+        document.getElementById('clubLinkFooter').addEventListener('click', (e) => {
+            e.preventDefault();
+            signinModal.classList.add('active');
+            document.querySelector('.signin-tab-btn[data-tab="club"]').click();
+        });
+        
+        // Search functionality
+        document.querySelector('.search-input').addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                const query = e.target.value.toLowerCase().trim();
+                if (query) {
+                    alert(`Searching for: "${query}". In a full implementation, this would search across all content.`);
+                }
+            }
+        });
+        
+        // Adjust visible pearls based on screen size
+        function adjustVisiblePearls() {
+            if (window.innerWidth < 768) {
+                visiblePearls = 3;
+            } else if (window.innerWidth < 1200) {
+                visiblePearls = 4;
+            } else {
+                visiblePearls = 5;
+            }
+            positionPearls();
+        }
+        
+        // Initialize everything
+        initializeNecklace();
+        updateDisplay(1);
+        updateNavigationStates();
+        startAutoRotate();
+        
+        // Adjust on window resize
+        window.addEventListener('resize', adjustVisiblePearls);
+        adjustVisiblePearls();
+        
+        console.log("CenterNecklace Platform with Complete Club System initialized");
+        console.log("Demo clubs available:");
+        platformData.clubs.forEach(club => {
+            console.log(`• ${club.name} - Username: "${club.id}", Password: "password123"`);
+        });
+    </script>
+</body>
+</html>
