@@ -1,0 +1,3387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Database Manager - CenterNecklace</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="./styles.css">
+    <style>
+ 
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-database"></i> JSON Database Manager</h1>
+            <div class="header-actions">
+                <button class="btn btn-success" onclick="saveDatabase()">
+                    <i class="fas fa-save"></i> Save Database
+                </button>
+                <button class="btn btn-primary" onclick="exportDatabase()">
+                    <i class="fas fa-download"></i> Export JSON
+                </button>
+                <button class="btn btn-warning" onclick="loadDatabase()">
+                    <i class="fas fa-sync"></i> Reload
+                </button>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <h3 id="bulletinsCount">0</h3>
+                <p>Bulletin Boards</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="storiesCount">0</h3>
+                <p>Stories</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="cardsetsCount">0</h3>
+                <p>Card Sets</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="clubsCount">0</h3>
+                <p>Clubs</p>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="bulletins">Bulletins</div>
+            <div class="tab" data-tab="stories">Stories</div>
+            <div class="tab" data-tab="cardsets">Card Sets</div>
+            <div class="tab" data-tab="clubsets">Club Sets</div>
+            <div class="tab" data-tab="yearsSets">Years Sets</div>
+            <div class="tab" data-tab="json">Raw JSON</div>
+            <div class="tab" data-tab="pictures">Pictures</div>
+        </div>
+        
+        <!-- Bulletins Tab -->
+        <div class="tab-content active" id="bulletinsTab">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Search bulletins..." onkeyup="searchTable('bulletins', this.value)">
+            </div>
+            <button class="btn btn-primary" onclick="openModal('bulletin', 'create')">
+                <i class="fas fa-plus"></i> Add Bulletin
+            </button>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Type</th>
+                        <th>Content</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="bulletinsTable">
+                    <!-- Filled by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Stories Tab -->
+        <div class="tab-content" id="storiesTab">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Search stories..." onkeyup="searchTable('stories', this.value)">
+            </div>
+            <button class="btn btn-primary" onclick="openModal('story', 'create')">
+                <i class="fas fa-plus"></i> Add Story
+            </button>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Content Preview</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="storiesTable">
+                    <!-- Filled by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Card Sets Tab -->
+        <div class="tab-content" id="cardsetsTab">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Search card sets..." onkeyup="searchTable('cardsets', this.value)">
+            </div>
+            <button class="btn btn-primary" onclick="openModal('cardset', 'create')">
+                <i class="fas fa-plus"></i> Add Card Set
+            </button>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Cards Count</th>
+                        <th>Card IDs</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="cardsetsTable">
+                    <!-- Filled by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Clubs Tab -->
+        <div class="tab-content" id="clubsetsTab">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Search club sets..." onkeyup="searchTable('clubsets', this.value)">
+            </div>
+            <button class="btn btn-primary" onclick="openModal('clubset', 'create')">
+                <i class="fas fa-plus"></i> Add Club Set
+            </button>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Subtitle</th>
+                        <th>Clubs Count</th>
+                        <th>Display Style</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="clubsetsTable">
+                    <!-- Filled by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+        <!-- Years Sets tab content -->
+        <div class="tab-content" id="yearsSetsTab">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Search years sets..." onkeyup="searchTable('yearsSets', this.value)">
+            </div>
+            <button class="btn btn-primary" onclick="openModal('yearsSet', 'create')">
+                <i class="fas fa-plus"></i> Add Years Set
+            </button>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Years</th>
+                        <th>Total Donation</th>
+                        <th>Events</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="yearsSetsTable">
+                    <!-- Filled by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pictures Tab -->
+        <div class="tab-content" id="picturesTab">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Search pictures..." onkeyup="searchPictures(this.value)">
+            </div>
+            <div style="margin-bottom: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="addLocalPictures()">
+                    <i class="fas fa-plus"></i> Add Pictures from Folder
+                </button>
+                <button class="btn btn-success" onclick="saveDatabase()">
+                    <i class="fas fa-save"></i> Save Pictures to Database
+                </button>
+                <button class="btn btn-warning" onclick="refreshPictureList()">
+                    <i class="fas fa-sync"></i> Refresh List
+                </button>
+            </div>
+            <div class="picture-gallery" id="picturesTable">
+                <!-- Pictures will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Raw JSON Tab -->
+        <div class="tab-content" id="jsonTab">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Search in JSON..." onkeyup="searchJSON(this.value)">
+            </div>
+            <textarea class="json-editor" id="jsonEditor" spellcheck="false"></textarea>
+            <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+                <button class="btn btn-success" onclick="saveJSON()">
+                    <i class="fas fa-check"></i> Apply JSON Changes
+                </button>
+                <button class="btn btn-warning" onclick="formatJSON()">
+                    <i class="fas fa-indent"></i> Format JSON
+                </button>
+                <button class="btn" onclick="copyJSON()">
+                    <i class="fas fa-copy"></i> Copy JSON
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Edit Item</h2>
+            <form id="editForm">
+                <!-- Form will be generated dynamically -->
+            </form>
+            <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                <button class="btn" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveItem()">Save</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Picture Selection Modal -->
+    <div class="modal" id="pictureSelectModal">
+        <div class="modal-content">
+            <h3>Select Pictures for Event</h3>
+            <div class="picture-gallery" id="pictureGallery">
+                <!-- Pictures will be loaded here -->
+            </div>
+            <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                <div id="selectedPictureCount">0 pictures selected</div>
+                <div>
+                    <button class="btn" onclick="closePictureSelectModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="applySelectedPictures()">Apply</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Card/Club Picture Selection Modal -->
+    <div class="modal" id="cardPictureSelectModal">
+        <div class="modal-content">
+            <h3 id="cardPictureSelectModalTitle">Select Profile Picture</h3>
+            <div style="margin-bottom: 1rem; color: #666;" id="cardPictureSelectModalDescription">
+                Select a picture. Only one picture can be selected.
+            </div>
+            <div class="picture-gallery" id="cardPictureGallery">
+                <!-- Pictures will be loaded here -->
+            </div>
+            <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                <div id="cardSelectedPictureInfo">No picture selected</div>
+                <div>
+                    <button class="btn" onclick="closeCardPictureSelectModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="applyPictureSelection()" id="applyPictureButton">Select Picture</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <!-- Add this near the end of the body, before the closing </body> tag -->
+    <input type="file" id="pictureFileInput" style="display: none;" accept="image/*" onchange="handlePictureFileSelect(event)" multiple>
+    
+<script>
+    // Database structure
+    let database = {
+        bulletins: [],
+        stories: [],
+        cardSets: [],
+        clubs: [],
+        yearsSets: [],
+        clubSets: [], // NEW: Add club sets array
+        pictureFolder: {}
+    };
+    
+    // Current editing item
+    let currentEditType = null;
+    let currentEditId = null;
+    let isCreating = false;
+    let currentPictureSelection = {
+        yearIndex: null,
+        eventIndex: null,
+        selectedPictures: new Set()
+    };
+    let currentCardPictureSelection = {
+    cardIndex: null,
+    selectedPictureId: null
+    };
+    let currentClubPictureSelection = {
+        clubIndex: null,
+        selectedPictureId: null
+    };
+    let currentPictureSelectionMode = 'card'; // 'card' or 'club'
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+        setupTabs();
+        loadDatabase();
+        refreshPictureList();
+    });
+
+    function applyPictureSelection() {
+        if (currentPictureSelectionMode === 'card') {
+            applyCardPictureSelection();
+        } else {
+            applyClubPictureSelection();
+        }
+    }
+
+    function closeCardPictureSelectModal() {
+        document.getElementById('cardPictureSelectModal').classList.remove('active');
+        currentCardPictureSelection = {
+            cardIndex: null,
+            selectedPictureId: null
+        };
+        currentClubPictureSelection = {
+            clubIndex: null,
+            selectedPictureId: null
+        };
+        currentPictureSelectionMode = 'card';
+    }
+    
+    // Refresh picture list
+    function refreshPictureList() {
+        const container = document.getElementById('picturesTable');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        Object.keys(database.pictureFolder).forEach(pictureId => {
+            const picture = database.pictureFolder[pictureId];
+            const pictureItem = createPictureItem(pictureId, picture);
+            container.appendChild(pictureItem);
+        });
+        
+        if (Object.keys(database.pictureFolder).length === 0) {
+            container.innerHTML = '<div style="text-align: center; padding: 2rem; color: #666;">No pictures added yet. Click "Add Pictures from Folder" to add pictures.</div>';
+        }
+    }
+
+    // Create picture item for display
+    function createPictureItem(pictureId, picture) {
+        const div = document.createElement('div');
+        div.className = 'picture-item';
+        div.style.position = 'relative';
+        div.style.display = 'flex';
+        div.style.flexDirection = 'column';
+        div.style.alignItems = 'center';
+        
+        // Use the relative path or a placeholder
+        const imgSrc = picture.path || 'https://via.placeholder.com/100x100?text=No+Image';
+        
+        div.innerHTML = `
+            <img src="${imgSrc}" 
+                alt="${picture.fileName || pictureId}"
+                style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px;"
+                onerror="this.src='https://via.placeholder.com/100x100?text=Picture+Not+Found'">
+            <div style="margin-top: 0.5rem; font-size: 0.8rem; text-align: center; max-width: 120px; word-break: break-all;">
+                ${picture.fileName || pictureId}
+            </div>
+            <div style="margin-top: 0.2rem; font-size: 0.7rem; color: #666;">
+                ${Math.round((picture.size || 0) / 1024)} KB
+            </div>
+            <div style="margin-top: 0.2rem; font-size: 0.7rem; color: #888; max-width: 120px; word-break: break-all;">
+                ${picture.path || 'No path'}
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="deletePicture('${pictureId}')" 
+                    style="position: absolute; top: 5px; right: 5px; padding: 0.2rem 0.4rem; font-size: 0.7rem;">
+                <i class="fas fa-trash"></i>
+            </button>
+        `;
+        
+        return div;
+    }
+
+        // Add local pictures from folder
+    function addLocalPictures() {
+        document.getElementById('pictureFileInput').click();
+    }
+
+    // Load pictures from server
+    async function loadPicturesFromServer() {
+        try {
+            const response = await fetch('http://localhost:3000/api/pictures');
+            if (response.ok) {
+                const pictures = await response.json();
+                pictures.forEach(pic => {
+                    if (!database.pictureFolder[pic.id]) {
+                        database.pictureFolder[pic.id] = {
+                            id: pic.id,
+                            fileName: pic.fileName,
+                            size: pic.size,
+                            uploaded: pic.uploaded
+                        };
+                    }
+                });
+                saveDatabase();
+            }
+        } catch (error) {
+            console.log('Could not load pictures from server:', error);
+        }
+    }
+    
+    // Load database from localStorage or use default
+    function loadDatabase() {
+        const saved = localStorage.getItem('centerNecklaceDatabase');
+        if (saved) {
+            try {
+                database = JSON.parse(saved);
+                // Ensure all arrays exist
+                database.bulletins = database.bulletins || [];
+                database.stories = database.stories || [];
+                database.cardSets = database.cardSets || [];
+                database.clubs = database.clubs || [];
+                database.yearsSets = database.yearsSets || [];
+                database.clubSets = database.clubSets || []; // Add this line
+                database.pictureFolder = database.pictureFolder || {};
+                showNotification('Database loaded successfully!', 'success');
+            } catch (e) {
+                console.error('Error loading database:', e);
+                showNotification('Error loading database. Using default data.', 'error');
+                loadDefaultData();
+            }
+        } else {
+            loadDefaultData();
+        }
+        
+        // Sort all data
+        sortAllData();
+        updateStats();
+        renderAllTables();
+        updateJSONEditor();
+    }
+    
+     // Load default data
+    function loadDefaultData() {
+        database = {
+            bulletins: [
+                { id: 1, title: "Our Mission", type: "scrolling", storyId: 1, yearsSetId: 1 },
+                { id: 2, title: "Our Timeline", type: "years", yearsSetId: 1 },
+                { id: 3, title: "Our History", type: "years", yearsSetId: 1 },
+                { id: 4, title: "Our Members", type: "mixed", storyId: 2, cardSetId: [1,2] },
+                { id: 5, title: "Our Clubs", type: "cards", cardSetId: 2, clubSetID: [4,2] },
+                { id: 6, title: "Our Branches", type: "cards", cardSetId: [11,12] },
+                { id: 7, title: "Letter Collection (21 Cards)", type: "cards", cardSetId: [4,2],},
+                { id: 8, title: "Partners", type: "clubs", clubSetIds: [1], clubsPerRow: 3, showJoinButton: true }, // Changed to position 8
+                { id: 9, title: "Contact & Support", type: "contact" } // Changed to position 9
+            ],
+            stories: [
+                { id: 1, title: "Compact Horizontal Necklace Navigation", content: "This navigation places the active bulletin in the center with the other bulletins arranged horizontally around it like pearls on a necklace. The center pearl is larger and highlighted, showing it's the active bulletin. Only 3-5 bulletins are visible at a time for a clean, compact look." },
+                { id: 2, title: "Featured Content Hub", content: "This bulletin demonstrates the mixed content capability of the platform. You can switch between a featured story and three different card sets using the control buttons. Each card set represents a different category of content, all managed through the JSON database structure." },
+                { id: 3, title: "2023 Annual Report", content: "2023 has been a transformative year for our organization. We successfully launched the CenterNecklace platform, which has revolutionized how we present content to our community. Engagement has increased by 65% since implementation." },
+                { id: 4, title: "2022 Highlights & Achievements", content: "In 2022, we focused on digital transformation and community outreach. We migrated all our content to a structured JSON database, which improved content management efficiency by 75%." }
+            ],
+            cardSets: [
+                { 
+                    id: 1, 
+                    name: "Featured Cards", 
+                    subtitle: "Meet our key members",
+                    cards: [
+                        { 
+                            id: 1, 
+                            name: "John Smith", 
+                            title: "CEO & Founder", 
+                            introduction: "With over 15 years of experience in community leadership, John founded our organization to make a lasting impact.",
+                            picture: "./picture/john_smith.jpg"
+                        },
+                        { 
+                            id: 2, 
+                            name: "Maria Garcia", 
+                            title: "Program Director", 
+                            introduction: "Maria manages our outreach programs and ensures every initiative aligns with our mission.",
+                            picture: "./picture/maria_garcia.jpg"
+                        },
+                        { 
+                            id: 3, 
+                            name: "David Chen", 
+                            title: "Operations Manager",
+                            picture: "./picture/david_chen.jpg"
+                            // No introduction provided for this card
+                        }
+                    ] 
+                },
+                { 
+                    id: 2, 
+                    name: "Additional Card Set", 
+                    cards: [
+                        { id: 1, name: "Test Card 1", title: "Test Title" },
+                        { id: 2, name: "Test Card 2", title: "Test Title 2" }
+                    ] 
+                }
+            ],
+            clubSets: [
+                {
+                    id: 1,
+                    name: "All Active Clubs",
+                    subtitle: "Browse and join our clubs",
+                    clubs: [
+                        { id: 1, name: "Technology Club", description: "A club for tech enthusiasts", link: "#", icon: "fas fa-laptop-code" },
+                        { id: 2, name: "Art Club", description: "Creative arts and crafts", link: "#", icon: "fas fa-palette" }
+                    ],
+                    displayAsCards: true
+                }
+            ],
+            yearsSets: [
+                {
+                    id: 1,
+                    name: "Recent 5 Years",
+                    years: [
+                        { 
+                            year: 2023, 
+                            donations: [
+                                { id: 1, amount: 10000, notes: "Major donor: John Smith" },
+                                { id: 2, amount: 15000, notes: "Corporate sponsorship" },
+                                { id: 3, amount: 25000, notes: "Community fundraiser" }
+                            ], 
+                            events: [
+                                { 
+                                    id: 1, 
+                                    name: "Annual Gala", 
+                                    date: "2023-05-15", 
+                                    description: "Annual fundraising gala event",
+                                    attendees: 250,
+                                    location: "Grand Hotel",
+                                    pictures: []
+                                },
+                                { 
+                                    id: 2, 
+                                    name: "Summer Festival", 
+                                    date: "2023-07-22", 
+                                    description: "Community summer festival",
+                                    attendees: 500,
+                                    location: "City Park",
+                                    pictures: []
+                                }
+                            ] 
+                        },
+                        { 
+                            year: 2022, 
+                            donations: [
+                                { id: 1, amount: 8000, notes: "Foundation grant" },
+                                { id: 2, amount: 12000, notes: "Individual donations" }
+                            ], 
+                            events: [
+                                { 
+                                    id: 1, 
+                                    name: "Winter Charity Ball", 
+                                    date: "2022-12-10", 
+                                    description: "Charity ball for winter fundraising",
+                                    attendees: 180,
+                                    location: "Royal Hall",
+                                    pictures: []
+                                }
+                            ] 
+                        }
+                    ]
+                }
+            ],
+            pictureFolder: {}
+        };
+        showNotification('Using default database', 'info');
+    }
+
+    // Add this function to generate necklace navigation
+    function generateNecklaceNavigation() {
+        const container = document.createElement('div');
+        container.className = 'necklace-container';
+        
+        // Sort bulletins by ID for proper order
+        const sortedBulletins = [...database.bulletins].sort((a, b) => a.id - b.id);
+        
+        // Find the active bulletin (you can change this logic as needed)
+        const activeBulletinId = 1; // Example: first bulletin is active
+        
+        sortedBulletins.forEach((bulletin, index) => {
+            const bubble = document.createElement('div');
+            bubble.className = `bulletin-bubble ${bulletin.id === activeBulletinId ? 'active' : ''}`;
+            bubble.dataset.bulletinId = bulletin.id;
+            
+            // Create content
+            const content = document.createElement('div');
+            content.className = 'bubble-content';
+            
+            // Create name with word wrapping
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'bulletin-name';
+            nameDiv.textContent = bulletin.title || `Bulletin ${bulletin.id}`;
+            
+            // Create number
+            const numberDiv = document.createElement('div');
+            numberDiv.className = 'bulletin-number';
+            numberDiv.textContent = `#${bulletin.id}`;
+            
+            content.appendChild(nameDiv);
+            content.appendChild(numberDiv);
+            bubble.appendChild(content);
+            
+            // Add click event
+            bubble.addEventListener('click', function() {
+                // Handle bulletin navigation
+                console.log('Navigate to bulletin:', bulletin.id);
+                // You can implement navigation logic here
+            });
+            
+            container.appendChild(bubble);
+        });
+        
+        return container;
+    }
+
+    // Function to generate header navigation
+    function generateHeaderNavigation() {
+        const container = document.createElement('div');
+        container.className = 'header-nav';
+        
+        // Sort bulletins by ID
+        const sortedBulletins = [...database.bulletins].sort((a, b) => a.id - b.id);
+        
+        sortedBulletins.forEach((bulletin, index) => {
+            const bubble = document.createElement('a');
+            bubble.className = `nav-bubble ${index === 0 ? 'active' : ''}`; // First one active by default
+            bubble.href = '#';
+            bubble.dataset.bulletinId = bulletin.id;
+            
+            // Truncate long names
+            const displayName = bulletin.title || `Bulletin ${bulletin.id}`;
+            bubble.textContent = displayName;
+            bubble.title = displayName; // Tooltip for full name
+            
+            // Add click event
+            bubble.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all
+                container.querySelectorAll('.nav-bubble').forEach(b => {
+                    b.classList.remove('active');
+                });
+                
+                // Add active to clicked
+                this.classList.add('active');
+                
+                // Handle navigation
+                console.log('Navigate to bulletin:', bulletin.id);
+            });
+            
+            container.appendChild(bubble);
+        });
+        
+        return container;
+    }
+
+    // Update the renderAllTables function to also update navigation
+    function updateNavigation() {
+        // Remove existing navigation if any
+        const oldNecklace = document.querySelector('.necklace-container');
+        const oldHeaderNav = document.querySelector('.header-nav');
+        
+        if (oldNecklace) oldNecklace.remove();
+        if (oldHeaderNav) oldHeaderNav.remove();
+        
+        // Add new navigation (you need to specify where to add these)
+        // For example, add to a specific container:
+        const necklaceContainer = document.getElementById('necklaceContainer');
+        const headerContainer = document.getElementById('headerNavContainer');
+        
+        if (necklaceContainer) {
+            necklaceContainer.appendChild(generateNecklaceNavigation());
+        }
+        
+        if (headerContainer) {
+            headerContainer.appendChild(generateHeaderNavigation());
+        }
+    }
+
+
+     // Save database to localStorage
+    function saveDatabase() {
+        try {
+            localStorage.setItem('centerNecklaceDatabase', JSON.stringify(database, null, 2));
+            showNotification('Database saved successfully!', 'success');
+            triggerDataChange();
+            updateNavigation(); // Update navigation on save
+        } catch (e) {
+            showNotification('Error saving database: ' + e.message, 'error');
+        }
+    }
+
+    // Export database as JSON file
+    function exportDatabase() {
+        try {
+            const dataStr = JSON.stringify(database, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            const exportFileDefaultName = 'centernecklace-database.json';
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showNotification('Database exported successfully!', 'success');
+        } catch (e) {
+            showNotification('Error exporting database: ' + e.message, 'error');
+        }
+    }
+    
+    // Setup tab switching
+    function setupTabs() {
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                tabs.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Get the tab ID
+                const tabId = this.getAttribute('data-tab');
+                
+                // Hide all tab contents
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Show the selected tab content
+                const tabContent = document.getElementById(tabId + 'Tab');
+                if (tabContent) {
+                    tabContent.classList.add('active');
+                }
+            });
+        });
+    }
+
+    function sortAllData() {
+        database.bulletins.sort((a, b) => a.id - b.id);
+        database.stories.sort((a, b) => a.id - b.id);
+        database.cardSets.sort((a, b) => a.id - b.id);
+        database.clubs.sort((a, b) => a.name?.localeCompare(b.name || ''));
+        database.yearsSets.sort((a, b) => a.id - b.id);
+        database.clubSets.sort((a, b) => a.id - b.id); // Add this line
+    }
+
+    // Render all tables
+    function renderAllTables() {
+        renderTable('bulletins', database.bulletins, renderBulletinRow);
+        renderTable('stories', database.stories, renderStoryRow);
+        renderTable('cardsets', database.cardSets, renderCardSetRow);
+        renderTable('clubsets', database.clubSets, renderClubSetRow);
+        renderTable('yearsSets', database.yearsSets, renderYearsSetRow);
+    }
+    
+    // Generic table renderer
+    function renderTable(type, data, renderFunction) {
+        const table = document.getElementById(type + 'Table');
+        if (!table) {
+            console.error('Table not found:', type + 'Table');
+            return;
+        }
+        
+        table.innerHTML = '';
+        data.forEach(item => {
+            const row = renderFunction(item);
+            if (row) {
+                table.appendChild(row);
+            }
+        });
+    }
+    
+    // Render bulletin row
+    function renderBulletinRow(bulletin) {
+        const tr = document.createElement('tr');
+        const typeClass = `type-${bulletin.type || 'scrolling'}`;
+        
+        tr.innerHTML = `
+            <td>${bulletin.id}</td>
+            <td>${bulletin.title || 'Untitled'}</td>
+            <td><span class="bulletin-type ${typeClass}">${bulletin.type || 'scrolling'}</span></td>
+            <td>${getBulletinContent(bulletin)}</td>
+            <td>
+                <button class="action-btn btn-view" onclick="viewItem('bulletin', ${bulletin.id})">View</button>
+                <button class="action-btn btn-edit" onclick="openModal('bulletin', 'edit', ${bulletin.id})">Edit</button>
+                <button class="action-btn btn-delete" onclick="deleteItem('bulletin', ${bulletin.id})">Delete</button>
+            </td>
+        `;
+        return tr;
+    }
+
+    // Render story row
+    function renderStoryRow(story) {
+        const tr = document.createElement('tr');
+        const preview = story.content?.length > 100 ? story.content.substring(0, 100) + '...' : story.content || '';
+        
+        tr.innerHTML = `
+            <td>${story.id}</td>
+            <td>${story.title || 'Untitled'}</td>
+            <td>${preview}</td>
+            <td>
+                <button class="action-btn btn-view" onclick="viewItem('story', ${story.id})">View</button>
+                <button class="action-btn btn-edit" onclick="openModal('story', 'edit', ${story.id})">Edit</button>
+                <button class="action-btn btn-delete" onclick="deleteItem('story', ${story.id})">Delete</button>
+            </td>
+        `;
+        return tr;
+    }
+    
+    // Render card set row
+    function renderCardSetRow(cardSet) {
+        const tr = document.createElement('tr');
+        const cards = cardSet.cards || [];
+        const cardsPreview = cards.length > 5 ? 
+            cards.slice(0, 5).join(', ') + '...' : 
+            cards.join(', ');
+        
+        tr.innerHTML = `
+            <td>${cardSet.id}</td>
+            <td>${cardSet.name || 'Unnamed Set'}</td>
+            <td>${cards.length}</td>
+            <td title="${cards.join(', ')}">${cardsPreview}</td>
+            <td>
+                <button class="action-btn btn-view" onclick="viewItem('cardset', ${cardSet.id})">View</button>
+                <button class="action-btn btn-edit" onclick="openModal('cardset', 'edit', ${cardSet.id})">Edit</button>
+                <button class="action-btn btn-delete" onclick="deleteItem('cardset', ${cardSet.id})">Delete</button>
+            </td>
+        `;
+        return tr;
+    }
+    
+    // Render club row
+    function renderClubRow(club) {
+        const tr = document.createElement('tr');
+        const membersCount = club.members ? club.members.length : 0;
+        const description = club.description ? 
+            (club.description.length > 50 ? club.description.substring(0, 50) + '...' : club.description) : 
+            'No description';
+        
+        tr.innerHTML = `
+            <td>${club.id}</td>
+            <td>${club.name || 'Unnamed Club'}</td>
+            <td>${description}</td>
+            <td>${membersCount} members</td>
+            <td>
+                <button class="action-btn btn-view" onclick="viewItem('club', '${club.id}')">View</button>
+                <button class="action-btn btn-edit" onclick="openModal('club', 'edit', '${club.id}')">Edit</button>
+                <button class="action-btn btn-delete" onclick="deleteItem('club', '${club.id}')">Delete</button>
+            </td>
+        `;
+        return tr;
+    }
+
+    // Render years set row
+    function renderYearsSetRow(yearsSet) {
+        const tr = document.createElement('tr');
+        const years = yearsSet.years || [];
+        const totalDonation = years.reduce((sum, year) => {
+            return sum + (year.donations || []).reduce((donationSum, donation) => donationSum + (donation.amount || 0), 0);
+        }, 0);
+        const totalEvents = years.reduce((sum, year) => sum + (year.events ? year.events.length : 0), 0);
+        const yearsList = years.map(y => y.year).join(', ');
+        
+        tr.innerHTML = `
+            <td>${yearsSet.id}</td>
+            <td>${yearsSet.name || 'Unnamed Set'}</td>
+            <td>${yearsList}</td>
+            <td>$${totalDonation.toLocaleString()}</td>
+            <td>${totalEvents} events</td>
+            <td>
+                <button class="action-btn btn-view" onclick="viewItem('yearsSet', ${yearsSet.id})">View</button>
+                <button class="action-btn btn-edit" onclick="openModal('yearsSet', 'edit', ${yearsSet.id})">Edit</button>
+                <button class="action-btn btn-delete" onclick="deleteItem('yearsSet', ${yearsSet.id})">Delete</button>
+            </td>
+        `;
+        return tr;
+    }
+    
+    // Get bulletin content summary - FIXED for multiple card sets
+    function getBulletinContent(bulletin) {
+        if (!bulletin.type) return 'No type specified';
+        
+        switch(bulletin.type) {
+            case 'scrolling':
+                return `Story ID: ${bulletin.storyId || 'None'}`;
+            case 'years':            
+                return `Years Set ID: ${bulletin.yearsSetId || 'None'}`;
+            case 'mixed':
+                const mixedCardSets = bulletin.cardSetIds ? 
+                    bulletin.cardSetIds.join(', ') : 
+                    (bulletin.cardSetId ? bulletin.cardSetId : 'None');
+                return `Story: ${bulletin.storyId || 'None'}, Card Sets: ${mixedCardSets}`;
+            case 'cards':
+                // Handle both single cardSetId and array cardSetIds
+                let cardSetsContent = 'None';
+                if (bulletin.cardSetIds && Array.isArray(bulletin.cardSetIds)) {
+                    cardSetsContent = bulletin.cardSetIds.join(', ');
+                } else if (bulletin.cardSetId) {
+                    cardSetsContent = bulletin.cardSetId.toString();
+                }
+                return `Card Sets: ${cardSetsContent}`;
+            case 'clubs':
+                const clubSets = bulletin.clubSetIds ? bulletin.clubSetIds.join(', ') : 'None';
+                const clubsPerRow = bulletin.clubsPerRow ? `${bulletin.clubsPerRow} per row` : '3 per row';
+                const joinButton = bulletin.showJoinButton !== false ? ' (Join button)' : '';
+                return `Club Sets: ${clubSets}, ${clubsPerRow}${joinButton}`;
+            case 'contact':
+                return 'Contact information';
+            case 'impact':
+                return 'Impact Dashboard';
+            case 'events':
+                return 'Event Gallery';
+            default:
+                return bulletin.type || 'Unknown';
+        }
+    }
+    
+    // Open modal for create/edit
+    function openModal(type, action, id = null) {
+        currentEditType = type;
+        isCreating = action === 'create';
+        currentEditId = id;
+        
+        const modal = document.getElementById('editModal');
+        const form = document.getElementById('editForm');
+        const title = document.getElementById('modalTitle');
+        
+        title.textContent = isCreating ? `Create New ${type}` : `Edit ${type}`;
+        form.innerHTML = generateForm(type, id);
+        
+        modal.classList.add('active');
+    }
+    
+    // Close modal
+    function closeModal() {
+        document.getElementById('editModal').classList.remove('active');
+    }
+    
+    // Generate form based on type
+    function generateForm(type, id) {
+        let item = null;
+        if (id !== null) {
+            if (type === 'club') {
+                item = database.clubs.find(c => c.id === id);
+            } else if (type === 'bulletin') {
+                item = database.bulletins.find(b => b.id === id);
+            } else if (type === 'story') {
+                item = database.stories.find(s => s.id === id);
+            } else if (type === 'cardset') {
+                item = database.cardSets.find(cs => cs.id === id);
+            } else if (type === 'yearsSet') {
+                item = database.yearsSets.find(ys => ys.id === id);
+            } else if (type === 'clubset') {
+                item = database.clubSets.find(cs => cs.id === id);
+            }
+        }
+        
+        switch(type) {
+            case 'bulletin':
+                return `
+                    <div class="form-group">
+                        <label>ID</label>
+                        <input type="number" class="form-control" id="bulletinId" value="${item ? item.id : (database.bulletins.length > 0 ? Math.max(...database.bulletins.map(b => b.id)) + 1 : 1)}" ${!isCreating ? 'readonly' : ''}>
+                    </div>
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" class="form-control" id="bulletinTitle" value="${item ? item.title : ''}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select class="form-control" id="bulletinType" onchange="updateBulletinFields()">
+                            <option value="scrolling" ${item && item.type === 'scrolling' ? 'selected' : ''}>Scrolling</option>
+                            <option value="years" ${item && item.type === 'years' ? 'selected' : ''}>Years</option>
+                            <option value="mixed" ${item && item.type === 'mixed' ? 'selected' : ''}>Mixed</option>
+                            <option value="cards" ${item && item.type === 'cards' ? 'selected' : ''}>Cards</option>
+                            <option value="clubs" ${item && item.type === 'clubs' ? 'selected' : ''}>Clubs</option> <!-- NEW OPTION -->
+                            <option value="contact" ${item && item.type === 'contact' ? 'selected' : ''}>Contact</option>
+                            <option value="impact" ${item && item.type === 'impact' ? 'selected' : ''}>Impact</option>
+                            <option value="events" ${item && item.type === 'events' ? 'selected' : ''}>Events</option>
+                        </select>
+                    </div>
+                    <div id="dynamicFields">
+                        ${generateBulletinFields(item)}
+                    </div>
+                `;
+            case 'yearsSet':
+                const yearsSet = item || { years: [] };
+                return `
+                    <div class="form-group">
+                        <label>ID</label>
+                        <input type="number" class="form-control" id="yearsSetId" 
+                            value="${yearsSet.id || (database.yearsSets.length > 0 ? Math.max(...database.yearsSets.map(ys => ys.id)) + 1 : 1)}" 
+                            ${!isCreating ? 'readonly' : ''}>
+                    </div>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" class="form-control" id="yearsSetName" 
+                            value="${yearsSet.name || ''}" 
+                            placeholder="Enter years set name" required>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>
+                            Years Management
+                            <button type="button" class="btn btn-primary" onclick="addYearRow()" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                                <i class="fas fa-plus"></i> Add Year
+                            </button>
+                        </h3>
+                        
+                        <div id="yearsContainer" style="max-height: 400px; overflow-y: auto; padding-right: 10px;">
+                            ${yearsSet.years && yearsSet.years.length > 0 ? 
+                                yearsSet.years.map((yearData, index) => generateYearRow(yearData, index)).join('') 
+                                : generateYearRow({ year: new Date().getFullYear(), donations: [], events: [] }, 0)
+                            }
+                        </div>
+                    </div>
+                `;
+            case 'story':
+                const story = item || { content: '' };
+                // Format content for textarea (preserve line breaks)
+                const storyContent = story.content ? story.content.replace(/<br\s*\/?>/gi, '\n') : '';
+                
+                return `
+                    <div class="form-group">
+                        <label>ID</label>
+                        <input type="number" class="form-control" id="storyId" value="${story.id || (database.stories.length > 0 ? Math.max(...database.stories.map(s => s.id)) + 1 : 1)}" ${!isCreating ? 'readonly' : ''}>
+                    </div>
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" class="form-control" id="storyTitle" value="${story.title || ''}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Content</label>
+                        <textarea class="form-control" id="storyContent" rows="8" required style="white-space: pre-wrap; font-family: monospace;">${storyContent}</textarea>
+                        <small style="color: #666;">
+                            Tip: Press Enter for new paragraphs. Line breaks will be preserved in display.
+                        </small>
+                    </div>
+                `;
+            case 'cardset':
+                const cardSet = item || { name: '', subtitle: '', cards: [] };
+                return `
+                    <div class="form-group">
+                        <label>ID</label>
+                        <input type="number" class="form-control" id="cardsetId" 
+                            value="${cardSet.id || (database.cardSets.length > 0 ? Math.max(...database.cardSets.map(cs => cs.id)) + 1 : 1)}" 
+                            ${!isCreating ? 'readonly' : ''}>
+                    </div>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" class="form-control" id="cardsetName" 
+                            value="${cardSet.name || ''}" 
+                            placeholder="Enter card set name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Subtitle (Optional)</label>
+                        <input type="text" class="form-control" id="cardsetSubtitle" 
+                            value="${cardSet.subtitle || ''}" 
+                            placeholder="Enter subtitle or motto">
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>
+                            Cards Management
+                            <button type="button" class="btn btn-primary" onclick="addCardRow()" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                                <i class="fas fa-plus"></i> Add Card
+                            </button>
+                        </h3>
+                        
+                        <div id="cardsContainer" style="max-height: 400px; overflow-y: auto; padding-right: 10px;">
+                            ${cardSet.cards && cardSet.cards.length > 0 ? 
+                                cardSet.cards.map((card, index) => generateCardRow(card, index)).join('') 
+                                : generateCardRow({ id: 1, name: '', title: '', introduction: '', picture: '' }, 0)
+                            }
+                        </div>
+                    </div>
+                `;
+            case 'clubset':
+                const clubSet = item || { name: '', subtitle: '', clubs: [] };
+                return generateClubSetForm(clubSet, id);
+            default:
+                return '<p>Form not available for this type</p>';
+        }
+    }
+
+    // Helper function to generate club set row
+function generateClubSetRow(clubId, index) {
+    const club = database.clubs.find(c => c.id === clubId);
+    const clubName = club ? club.name : `Club ID: ${clubId}`;
+    const clubDescription = club ? club.description : 'Club not found';
+    
+    return `
+        <div class="club-set-row" data-index="${index}" style="padding: 1rem; margin-bottom: 1rem; border: 1px solid #eee; border-radius: 5px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <h4 style="margin: 0; color: var(--primary);">${clubName}</h4>
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeClubFromSet(${index})">
+                    <i class="fas fa-trash"></i> Remove
+                </button>
+            </div>
+            
+            <div style="margin-bottom: 0.5rem;">
+                <strong>Club ID:</strong> ${clubId}
+            </div>
+            
+            <div style="margin-bottom: 0.5rem; color: #666;">
+                ${clubDescription.substring(0, 100)}${clubDescription.length > 100 ? '...' : ''}
+            </div>
+            
+            <input type="hidden" class="club-id-field" value="${clubId}">
+        </div>
+    `;
+}
+
+// Add club to set function
+function addClubToSet() {
+    const container = document.getElementById('clubsContainer');
+    
+    // Create modal or dropdown for selecting clubs
+    let clubOptions = '<option value="">Select a Club</option>';
+    database.clubs.forEach(club => {
+        clubOptions += `<option value="${club.id}">${club.name} (${club.id})</option>`;
+    });
+    
+    const clubId = prompt(`Select a club to add:\n\nAvailable Clubs:\n${database.clubs.map(c => `- ${c.name} (${c.id})`).join('\n')}\n\nEnter Club ID:`);
+    
+    if (clubId && database.clubs.find(c => c.id === clubId)) {
+        const newRow = generateClubSetRow(clubId, container.children.length);
+        container.insertAdjacentHTML('beforeend', newRow);
+    } else if (clubId) {
+        alert('Club not found. Please enter a valid Club ID.');
+    }
+}
+
+// Remove club from set
+function removeClubFromSet(index) {
+    const row = document.querySelector(`.club-set-row[data-index="${index}"]`);
+    if (row && confirm('Remove this club from the set?')) {
+        row.remove();
+    }
+}
+    
+    // Generate a card row for the card set form
+    function generateCardRow(card = {}, index) {
+        // Get the current picture ID if exists
+        const currentPictureId = card.picture || '';
+        
+        return `
+            <div class="card-row" data-index="${index}">
+                <div class="card-header" style="background: #f8f9fa; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
+                    <h4 style="margin: 0; color: var(--primary);">
+                        Card ${index + 1}
+                    </h4>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removeCardRow(${index})" style="padding: 0.2rem 0.5rem; font-size: 0.8rem;">
+                        <i class="fas fa-trash"></i> Remove
+                    </button>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Card ID</label>
+                        <input type="number" class="form-control card-field" 
+                            data-field="id" 
+                            value="${card.id || (index + 1)}"
+                            min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Name *</label>
+                        <input type="text" class="form-control card-field" 
+                            data-field="name" 
+                            value="${card.name || ''}"
+                            placeholder="Enter card name" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Title (Optional)</label>
+                        <input type="text" class="form-control card-field" 
+                            data-field="title" 
+                            value="${card.title || ''}"
+                            placeholder="e.g., CEO, Director, etc.">
+                    </div>
+                    <div class="form-group">
+                        <label>Profile Picture</label>
+                        <div style="display: flex; gap: 1rem; align-items: flex-end;">
+                            <select class="form-control card-field card-picture-select" 
+                                data-field="picture" 
+                                style="flex: 1;"
+                                data-card-index="${index}">
+                                <option value="">No picture</option>
+                                ${Object.keys(database.pictureFolder).map(pictureId => {
+                                    const picture = database.pictureFolder[pictureId];
+                                    return `<option value="${pictureId}" ${currentPictureId === pictureId ? 'selected' : ''}>
+                                        ${picture.fileName || pictureId}
+                                    </option>`;
+                                }).join('')}
+                            </select>
+                            <button type="button" class="btn btn-secondary" onclick="openCardPictureSelectModal(${index})" style="white-space: nowrap;">
+                                <i class="fas fa-images"></i> Browse
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Picture Preview -->
+                <div id="cardPicturePreview-${index}" style="margin: 1rem 0; ${currentPictureId ? '' : 'display: none;'}">
+                    <div style="font-size: 0.9rem; margin-bottom: 0.5rem;">Preview:</div>
+                    <div id="cardPicturePreviewContent-${index}">
+                        ${currentPictureId && database.pictureFolder[currentPictureId] ? `
+                            <div style="display: inline-block; text-align: center;">
+                                <img src="${database.pictureFolder[currentPictureId].path || `./picture/${database.pictureFolder[currentPictureId].fileName}`}" 
+                                    alt="Preview" 
+                                    style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px; border: 2px solid #ddd;"
+                                    onerror="this.src='https://via.placeholder.com/100x100?text=No+Image'">
+                                <div style="font-size: 0.8rem; margin-top: 0.2rem; max-width: 100px; word-break: break-all;">
+                                    ${database.pictureFolder[currentPictureId].fileName || currentPictureId}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Introduction (Optional)</label>
+                    <textarea class="form-control card-field" 
+                        data-field="introduction" 
+                        rows="2"
+                        placeholder="Brief introduction or description">${card.introduction || ''}</textarea>
+                    <small>Leave empty if you don't want to show an introduction.</small>
+                </div>
+            </div>
+        `;
+    }
+
+    // Add a new card row
+    function addCardRow() {
+        const cardsContainer = document.getElementById('cardsContainer');
+        const cardRows = cardsContainer.querySelectorAll('.card-row');
+        const newIndex = cardRows.length;
+        
+        const newCardRow = generateCardRow({
+            id: newIndex + 1,
+            name: '',
+            title: '',
+            introduction: '',
+            picture: ''
+        }, newIndex);
+        
+        cardsContainer.insertAdjacentHTML('beforeend', newCardRow);
+        scrollToNewCard(newIndex);
+    }
+
+    // Remove a card row
+    function removeCardRow(cardIndex) {
+        const cardRow = document.querySelector(`.card-row[data-index="${cardIndex}"]`);
+        if (cardRow && confirm('Are you sure you want to remove this card?')) {
+            cardRow.remove();
+            reindexCardRows();
+        }
+    }
+
+    // Re-index card rows after removal
+    function reindexCardRows() {
+        const cardsContainer = document.getElementById('cardsContainer');
+        const cardRows = cardsContainer.querySelectorAll('.card-row');
+        
+        cardRows.forEach((row, newIndex) => {
+            row.setAttribute('data-index', newIndex);
+        });
+    }
+
+    // Scroll to newly added card
+    function scrollToNewCard(cardIndex) {
+        const newRow = document.querySelector(`.card-row[data-index="${cardIndex}"]`);
+        if (newRow) {
+            setTimeout(() => {
+                newRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+    }
+
+    // Generate a year row for the years set form
+    function generateYearRow(yearData = {}, index) {
+        const yearDonations = yearData.donations || [];
+        const yearEvents = yearData.events || [];
+        const totalDonation = yearDonations.reduce((sum, donation) => sum + (donation.amount || 0), 0);
+        
+        return `
+            <div class="year-row" data-index="${index}">
+                <div class="year-header">
+                    <h4 style="margin: 0; color: var(--primary);">
+                        Year ${yearData.year || new Date().getFullYear()}
+                        <small style="font-size: 0.8rem; color: #666; margin-left: 0.5rem;">
+                            (Total: $${totalDonation.toLocaleString()})
+                        </small>
+                    </h4>
+                    <div class="year-actions">
+                        <button type="button" class="year-action-btn add-event" onclick="addDonationToYear(${index})">
+                            <i class="fas fa-donate"></i> Add Donation
+                        </button>
+                        <button type="button" class="year-action-btn add-event" onclick="addEventToYear(${index})">
+                            <i class="fas fa-calendar-plus"></i> Add Event
+                        </button>
+                        <button type="button" class="year-action-btn remove-year" onclick="removeYearRow(${index})">
+                            <i class="fas fa-trash"></i> Remove
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Year</label>
+                        <input type="number" class="form-control year-field" 
+                            data-field="year" 
+                            value="${yearData.year || new Date().getFullYear()}"
+                            min="2000" max="2100" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Total Donation</label>
+                        <input type="text" class="form-control" 
+                            value="$${totalDonation.toLocaleString()}" 
+                            readonly style="background: #f8f9fa;">
+                    </div>
+                </div>
+                
+                <div class="form-section" style="margin: 1rem 0; padding: 1rem;">
+                    <h5 style="margin: 0 0 1rem 0; color: var(--primary);">Donations</h5>
+                    
+                    <div id="donations-${index}">
+                        ${yearDonations.length > 0 ? 
+                            yearDonations.map((donation, donationIndex) => generateDonationRow(donation, index, donationIndex)).join('') 
+                            : '<p style="color: #666; text-align: center;">No donations added yet</p>'
+                        }
+                    </div>
+                </div>
+                
+                <div class="events-container">
+                    <h5 style="margin: 0 0 1rem 0; color: var(--success);">Events</h5>
+                    
+                    <div id="events-${index}">
+                        ${yearEvents.length > 0 ? 
+                            yearEvents.map((event, eventIndex) => generateEventRow(event, index, eventIndex)).join('') 
+                            : '<p style="color: #666; text-align: center;">No events added yet</p>'
+                        }
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Generate a donation row for a year
+    function generateDonationRow(donation = {}, yearIndex, donationIndex) {
+        return `
+            <div class="form-row" style="margin-bottom: 0.5rem; padding: 0.5rem; background: #f8f9fa; border-radius: 5px;">
+                <div class="form-group" style="flex: 1;">
+                    <label>Amount ($)</label>
+                    <input type="number" class="form-control donation-field" 
+                        data-year="${yearIndex}" 
+                        data-donation="${donationIndex}"
+                        data-field="amount"
+                        value="${donation.amount || 0}"
+                        min="0" step="0.01" required>
+                </div>
+                <div class="form-group" style="flex: 2;">
+                    <label>Notes</label>
+                    <input type="text" class="form-control donation-field" 
+                        data-year="${yearIndex}" 
+                        data-donation="${donationIndex}"
+                        data-field="notes"
+                        value="${donation.notes || ''}"
+                        placeholder="Donation notes">
+                </div>
+                <div class="form-group" style="flex: 0; display: flex; align-items: flex-end;">
+                    <button type="button" class="btn btn-danger" onclick="removeDonation(${yearIndex}, ${donationIndex})" style="padding: 0.5rem;">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Generate an event row for a year
+    function generateEventRow(event = {}, yearIndex, eventIndex) {
+        const eventPictures = event.pictures || [];
+        return `
+            <div class="event-row" data-event-index="${eventIndex}">
+                <div class="event-header">
+                    <h6 style="margin: 0; color: var(--secondary);">
+                        ${event.name || 'New Event'}
+                    </h6>
+                    <button type="button" class="remove-event-btn" onclick="removeEvent(${yearIndex}, ${eventIndex})" title="Remove Event">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Event Name</label>
+                        <input type="text" class="form-control event-field" 
+                            data-year="${yearIndex}" 
+                            data-event="${eventIndex}"
+                            data-field="name"
+                            value="${event.name || ''}"
+                            placeholder="Event name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" class="form-control event-field" 
+                            data-year="${yearIndex}" 
+                            data-event="${eventIndex}"
+                            data-field="date"
+                            value="${event.date || ''}" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea class="form-control event-field" 
+                            data-year="${yearIndex}" 
+                            data-event="${eventIndex}"
+                            data-field="description"
+                            rows="2">${event.description || ''}</textarea>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Attendees</label>
+                        <input type="number" class="form-control event-field" 
+                            data-year="${yearIndex}" 
+                            data-event="${eventIndex}"
+                            data-field="attendees"
+                            value="${event.attendees || 0}"
+                            min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" class="form-control event-field" 
+                            data-year="${yearIndex}" 
+                            data-event="${eventIndex}"
+                            data-field="location"
+                            value="${event.location || ''}"
+                            placeholder="Event location">
+                    </div>
+                </div>
+                
+                <div class="form-section" style="margin: 1rem 0; padding: 1rem;">
+                    <h6 style="margin: 0 0 0.5rem 0; color: var(--primary);">
+                        Event Pictures (${eventPictures.length})
+                        <button type="button" class="btn btn-primary btn-sm" onclick="openPictureSelectModal(${yearIndex}, ${eventIndex})" style="padding: 0.2rem 0.5rem; font-size: 0.8rem; margin-left: 0.5rem;">
+                            <i class="fas fa-images"></i> Select Pictures
+                        </button>
+                    </h6>
+                    
+                    <div id="eventPictures-${yearIndex}-${eventIndex}" class="picture-gallery" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem;">
+                        ${eventPictures.map(pictureId => {
+                            const picture = database.pictureFolder && database.pictureFolder[pictureId];
+                            if (picture) {
+                                return `
+                                    <div class="picture-item" data-picture-id="${pictureId}" style="width: 100px; text-align: center;">
+                                        <img src="${picture.path || `./picture/${picture.fileName}`}" 
+                                            alt="${picture.fileName}"
+                                            style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px;"
+                                            onerror="this.src='https://via.placeholder.com/80x80?text=Picture+Not+Found'">
+                                        <div style="font-size: 0.7rem; margin-top: 0.2rem; word-break: break-all;">
+                                            ${picture.fileName.substring(0, 10)}${picture.fileName.length > 10 ? '...' : ''}
+                                        </div>
+                                        <div style="font-size: 0.6rem; color: #666;">
+                                            ${pictureId.substring(0, 8)}...
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                            return `
+                                <div class="picture-item" style="width: 100px; text-align: center; color: #999; font-size: 0.8rem;">
+                                    <div style="width: 80px; height: 80px; background: #eee; border-radius: 5px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                        <i class="fas fa-image"></i>
+                                    </div>
+                                    <div style="margin-top: 0.2rem;">Missing</div>
+                                    <div style="font-size: 0.6rem; color: #666;">
+                                        ${pictureId}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    
+                    <!-- Hidden field to store picture IDs as JSON string -->
+                    <input type="hidden" class="event-pictures-field" 
+                        id="eventPicturesField-${yearIndex}-${eventIndex}"
+                        data-year="${yearIndex}" 
+                        data-event="${eventIndex}"
+                        value="${JSON.stringify(eventPictures)}">
+                </div>
+            </div>
+        `;
+    }   
+    // Add a new year row
+    function addYearRow() {
+        const yearsContainer = document.getElementById('yearsContainer');
+        const yearRows = yearsContainer.querySelectorAll('.year-row');
+        const newIndex = yearRows.length;
+        
+        const newYearRow = generateYearRow({
+            year: new Date().getFullYear() - newIndex,
+            donations: [],
+            events: []
+        }, newIndex);
+        
+        yearsContainer.insertAdjacentHTML('beforeend', newYearRow);
+        scrollToNewYear(newIndex);
+    }
+    
+    // Add donation to a specific year
+    function addDonationToYear(yearIndex) {
+        const donationsContainer = document.getElementById(`donations-${yearIndex}`);
+        const donationRows = donationsContainer.querySelectorAll('.form-row');
+        const newDonationIndex = donationRows.length;
+        
+        const newDonationRow = generateDonationRow({
+            id: Date.now(),
+            amount: 0,
+            notes: ''
+        }, yearIndex, newDonationIndex);
+        
+        donationsContainer.insertAdjacentHTML('beforeend', newDonationRow);
+    }
+    
+    // Add event to a specific year
+    function addEventToYear(yearIndex) {
+        const eventsContainer = document.getElementById(`events-${yearIndex}`);
+        const eventRows = eventsContainer.querySelectorAll('.event-row');
+        const newEventIndex = eventRows.length;
+        
+        const newEventRow = generateEventRow({
+            id: Date.now(),
+            name: `Event ${newEventIndex + 1}`,
+            date: new Date().toISOString().split('T')[0],
+            description: '',
+            attendees: 0,
+            location: '',
+            pictures: []
+        }, yearIndex, newEventIndex);
+        
+        eventsContainer.insertAdjacentHTML('beforeend', newEventRow);
+    }
+    
+    // Remove a year row
+    function removeYearRow(yearIndex) {
+        const yearRow = document.querySelector(`.year-row[data-index="${yearIndex}"]`);
+        if (yearRow && confirm('Are you sure you want to remove this year and all its data?')) {
+            yearRow.remove();
+            reindexYearRows();
+        }
+    }
+    
+    // Remove a donation
+    function removeDonation(yearIndex, donationIndex) {
+        const donationsContainer = document.getElementById(`donations-${yearIndex}`);
+        const donationRow = donationsContainer.querySelector(`.form-row:nth-child(${parseInt(donationIndex) + 1})`);
+        if (donationRow && confirm('Are you sure you want to remove this donation?')) {
+            donationRow.remove();
+        }
+    }
+    
+    // Remove an event
+    function removeEvent(yearIndex, eventIndex) {
+        const eventRow = document.querySelector(`.event-row[data-event-index="${eventIndex}"]`);
+        if (eventRow && confirm('Are you sure you want to remove this event?')) {
+            eventRow.remove();
+        }
+    }
+    
+    // Re-index year rows after removal
+    function reindexYearRows() {
+        const yearsContainer = document.getElementById('yearsContainer');
+        const yearRows = yearsContainer.querySelectorAll('.year-row');
+        
+        yearRows.forEach((row, newIndex) => {
+            row.setAttribute('data-index', newIndex);
+        });
+    }
+    
+    // Scroll to newly added year
+    function scrollToNewYear(yearIndex) {
+        const newRow = document.querySelector(`.year-row[data-index="${yearIndex}"]`);
+        if (newRow) {
+            setTimeout(() => {
+                newRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+    }
+
+    // Handle picture file selection
+    function handlePictureFileSelect(event) {
+        const files = event.target.files;
+        if (!files || files.length === 0) return;
+        
+        showNotification(`Processing ${files.length} pictures...`, 'info');
+        
+        Array.from(files).forEach(file => {
+            const pictureId = 'pic_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            const fileName = file.name;
+            
+            // Store picture with ID, filename, and relative path
+            database.pictureFolder[pictureId] = {
+                id: pictureId,
+                fileName: fileName,
+                originalName: file.name,
+                size: file.size,
+                type: file.type,
+                uploaded: new Date().toISOString(),
+                path: `./picture/${fileName}`  // Relative path for display
+            };
+            
+            // Add to gallery
+            const container = document.getElementById('picturesTable');
+            if (container) {
+                const pictureItem = createPictureItem(pictureId, database.pictureFolder[pictureId]);
+                container.appendChild(pictureItem);
+            }
+            
+            saveDatabase();
+        });
+        
+        showNotification(`${files.length} pictures added to database`, 'success');
+        
+        // Clear the file input
+        event.target.value = '';
+    }
+    
+    // Upload multiple pictures to server
+    async function uploadPicturesToServer(files) {
+        const formData = new FormData();
+        
+        // Add all selected files
+        for (let i = 0; i < files.length; i++) {
+            formData.append('pictures', files[i]);
+        }
+        
+        try {
+            showNotification('Uploading pictures...', 'info');
+            
+            const response = await fetch('http://localhost:3000/api/upload-pictures', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Upload failed: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            
+            // Store picture metadata in database
+            result.pictures.forEach(pictureData => {
+                database.pictureFolder[pictureData.id] = pictureData;
+            });
+            
+            saveDatabase();
+            
+            // Refresh picture selection modal if open
+            const modal = document.getElementById('pictureSelectModal');
+            if (modal && modal.classList.contains('active')) {
+                openPictureSelectModal(currentPictureSelection.yearIndex, currentPictureSelection.eventIndex);
+            }
+            
+            showNotification(result.message, 'success');
+        } catch (error) {
+            console.error('Error uploading pictures:', error);
+            showNotification('Failed to upload pictures: ' + error.message, 'error');
+        }
+    }
+    
+    // Add picture to gallery in modal
+// Add picture to gallery in modal
+function addPictureToGallery(pictureId, pictureData) {
+    const gallery = document.getElementById('pictureGallery');
+    if (!gallery) return;
+    
+    const pictureItem = document.createElement('div');
+    pictureItem.className = 'picture-item';
+    pictureItem.dataset.pictureId = pictureId;
+    
+    if (currentPictureSelection.selectedPictures.has(pictureId)) {
+        pictureItem.classList.add('selected');
+    }
+    
+    // Use the relative path
+    const imgSrc = pictureData.path || `./picture/${pictureData.fileName}`;
+    
+    pictureItem.innerHTML = `
+        <input type="checkbox" class="picture-checkbox" 
+               ${currentPictureSelection.selectedPictures.has(pictureId) ? 'checked' : ''}>
+        <img src="${imgSrc}" alt="${pictureData.fileName || pictureId}"
+             onerror="this.src='https://via.placeholder.com/100x100?text=Picture+Not+Found'">
+        <div class="picture-info">${pictureData.fileName || pictureId}</div>
+        <div class="picture-path">${pictureData.path || `./picture/${pictureData.fileName}`}</div>
+    `;
+    
+    pictureItem.onclick = (e) => {
+        if (!e.target.classList.contains('picture-checkbox')) {
+            const checkbox = pictureItem.querySelector('.picture-checkbox');
+            checkbox.checked = !checkbox.checked;
+            updatePictureSelection(pictureId, checkbox.checked);
+        }
+    };
+    
+    const checkbox = pictureItem.querySelector('.picture-checkbox');
+    checkbox.onchange = (e) => {
+        e.stopPropagation();
+        updatePictureSelection(pictureId, checkbox.checked);
+    };
+    
+    gallery.appendChild(pictureItem);
+}
+
+        // Open picture selection modal
+ // Open picture selection modal
+function openPictureSelectModal(yearIndex, eventIndex) {
+    currentPictureSelection.yearIndex = yearIndex;
+    currentPictureSelection.eventIndex = eventIndex;
+    
+    // Get current selected pictures from the hidden field
+    const picturesField = document.getElementById(`eventPicturesField-${yearIndex}-${eventIndex}`);
+    const currentPictures = picturesField ? JSON.parse(picturesField.value || '[]') : [];
+    currentPictureSelection.selectedPictures = new Set(currentPictures);
+    
+    // Load picture gallery
+    const gallery = document.getElementById('pictureGallery');
+    gallery.innerHTML = '';
+    
+    // Add upload option
+    const uploadItem = document.createElement('div');
+    uploadItem.className = 'picture-item';
+    uploadItem.style.cursor = 'pointer';
+    uploadItem.style.display = 'flex';
+    uploadItem.style.flexDirection = 'column';
+    uploadItem.style.alignItems = 'center';
+    uploadItem.style.justifyContent = 'center';
+    uploadItem.style.border = '2px dashed #ccc';
+    uploadItem.innerHTML = `
+        <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem;"></i>
+        <div style="color: var(--primary);">Upload New Pictures</div>
+        <div style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">Multiple selection allowed</div>
+    `;
+    uploadItem.onclick = () => {
+        document.getElementById('pictureFileInput').click();
+    };
+    gallery.appendChild(uploadItem);
+    
+    // Add existing pictures from database
+    Object.keys(database.pictureFolder).forEach(pictureId => {
+        const picture = database.pictureFolder[pictureId];
+        addPictureToGallery(pictureId, picture);
+    });
+    
+    updateSelectedPictureCount();
+    document.getElementById('pictureSelectModal').classList.add('active');
+}
+    
+    // Update picture selection
+    function updatePictureSelection(pictureId, isSelected) {
+        if (isSelected) {
+            currentPictureSelection.selectedPictures.add(pictureId);
+        } else {
+            currentPictureSelection.selectedPictures.delete(pictureId);
+        }
+        
+        const pictureItem = document.querySelector(`.picture-item[data-picture-id="${pictureId}"]`);
+        if (pictureItem) {
+            if (isSelected) {
+                pictureItem.classList.add('selected');
+            } else {
+                pictureItem.classList.remove('selected');
+            }
+        }
+        
+        updateSelectedPictureCount();
+    }
+    
+    // Update selected picture count
+    function updateSelectedPictureCount() {
+        document.getElementById('selectedPictureCount').textContent = 
+            `${currentPictureSelection.selectedPictures.size} pictures selected`;
+    }
+    
+    // Apply selected pictures to event
+    function applySelectedPictures() {
+        const { yearIndex, eventIndex, selectedPictures } = currentPictureSelection;
+        const picturesArray = Array.from(selectedPictures);
+        
+        // Update the hidden field
+        const picturesField = document.getElementById(`eventPicturesField-${yearIndex}-${eventIndex}`);
+        if (picturesField) {
+            picturesField.value = JSON.stringify(picturesArray);
+        }
+        
+        // Update the visual display in the form
+        const picturesContainer = document.getElementById(`eventPictures-${yearIndex}-${eventIndex}`);
+        if (picturesContainer) {
+            picturesContainer.innerHTML = picturesArray.map(pictureId => {
+                const picture = database.pictureFolder[pictureId];
+                if (picture) {
+                    return `
+                        <div class="picture-item" data-picture-id="${pictureId}" style="width: 100px; text-align: center;">
+                            <img src="${picture.path || `./picture/${picture.fileName}`}" 
+                                alt="${picture.fileName}"
+                                style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px;"
+                                onerror="this.src='https://via.placeholder.com/80x80?text=Picture+Not+Found'">
+                            <div style="font-size: 0.7rem; margin-top: 0.2rem; word-break: break-all;">
+                                ${picture.fileName.substring(0, 10)}${picture.fileName.length > 10 ? '...' : ''}
+                            </div>
+                            <div style="font-size: 0.6rem; color: #666;">
+                                ${pictureId.substring(0, 8)}...
+                            </div>
+                        </div>
+                    `;
+                }
+                return `
+                    <div class="picture-item" style="width: 100px; text-align: center; color: #999; font-size: 0.8rem;">
+                        <div style="width: 80px; height: 80px; background: #eee; border-radius: 5px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div style="margin-top: 0.2rem;">Missing</div>
+                        <div style="font-size: 0.6rem; color: #666;">
+                            ${pictureId}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        closePictureSelectModal();
+        showNotification(`${picturesArray.length} pictures selected for event`, 'success');
+    }
+    
+    // Close picture selection modal
+    function closePictureSelectModal() {
+        document.getElementById('pictureSelectModal').classList.remove('active');
+        currentPictureSelection = {
+            yearIndex: null,
+            eventIndex: null,
+            selectedPictures: new Set()
+        };
+    }
+
+        // Delete a picture
+    function deletePicture(pictureId) {
+        if (confirm('Are you sure you want to delete this picture? This will remove it from all events that use it.')) {
+            delete database.pictureFolder[pictureId];
+            saveDatabase();
+            refreshPictureList();
+            
+            // Also remove from any events that reference this picture
+            database.yearsSets.forEach(yearsSet => {
+                yearsSet.years.forEach(year => {
+                    year.events && year.events.forEach(event => {
+                        if (event.pictures && event.pictures.includes(pictureId)) {
+                            event.pictures = event.pictures.filter(id => id !== pictureId);
+                        }
+                    });
+                });
+            });
+            
+            showNotification('Picture deleted successfully', 'success');
+        }
+    }
+    
+        
+    // Search pictures
+    function searchPictures(query) {
+        const gallery = document.getElementById('picturesTable');
+        const items = gallery.querySelectorAll('.picture-item');
+        
+        items.forEach(item => {
+            const text = item.textContent.toLowerCase();
+            item.style.display = text.includes(query.toLowerCase()) ? '' : 'none';
+        });
+    }
+    
+    // Trigger data change for other tabs
+    function triggerDataChange() {
+        // Create and dispatch a storage event
+        const event = new StorageEvent('storage', {
+            key: 'centerNecklaceDatabase',
+            newValue: localStorage.getItem('centerNecklaceDatabase'),
+            oldValue: localStorage.getItem('centerNecklaceDatabase'),
+            url: window.location.href,
+            storageArea: localStorage
+        });
+        
+        try {
+            window.dispatchEvent(event);
+        } catch (e) {
+            console.log('Data change triggered');
+        }
+    }
+
+    // Listen for storage changes from other tabs
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'centerNecklaceDatabase') {
+            showNotification('Database updated from another tab. Reloading...', 'info');
+            setTimeout(() => {
+                loadDatabase();
+                refreshPictureList();
+            }, 1000);
+        }
+    });
+
+    // Generate dynamic fields for bulletin based on type
+    function generateBulletinFields(item) {
+        const type = item ? item.type : 'scrolling';
+        let fields = '';
+        
+        switch(type) {
+            case 'scrolling':
+                fields = `
+                    <div class="form-group">
+                        <label>Story ID</label>
+                        <input type="number" class="form-control" id="bulletinStoryId" value="${item ? (item.storyId || '') : ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Years Set ID (for total donation calculation)</label>
+                        <input type="number" class="form-control" id="bulletinYearsSetId" value="${item ? (item.yearsSetId || '') : ''}">
+                    </div>
+                `;
+                break;
+            case 'years':
+                // Create dropdown for years sets
+                let yearsSetOptions = '<option value="">Select Years Set</option>';
+                database.yearsSets.forEach(ys => {
+                    const selected = item && item.yearsSetId === ys.id ? 'selected' : '';
+                    yearsSetOptions += `<option value="${ys.id}" ${selected}>${ys.name} (ID: ${ys.id})</option>`;
+                });
+                
+                fields = `
+                    <div class="form-group">
+                        <label>Years Set</label>
+                        <select class="form-control" id="bulletinYearsSetId">
+                            ${yearsSetOptions}
+                        </select>
+                        <small>Select an existing years set</small>
+                    </div>
+                `;
+                break;
+            case 'mixed':
+                // Get current card set IDs (handle both single and multiple)
+                const currentCardSetIds = item ? 
+                    (Array.isArray(item.cardSetIds) ? item.cardSetIds : 
+                    item.cardSetId ? [item.cardSetId] : []) 
+                    : [];
+                
+                // Create multi-select for card sets
+                let cardSetOptions = '';
+                database.cardSets.forEach(cs => {
+                    const selected = currentCardSetIds.includes(cs.id) ? 'selected' : '';
+                    cardSetOptions += `<option value="${cs.id}" ${selected}>${cs.name} (ID: ${cs.id}, ${cs.cards ? cs.cards.length : 0} cards)</option>`;
+                });
+                
+                fields = `
+                    <div class="form-group">
+                        <label>Story ID</label>
+                        <input type="number" class="form-control" id="bulletinStoryId" value="${item ? (item.storyId || '') : ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Card Sets (Multiple Selection)</label>
+                        <select class="form-control" id="bulletinCardSetIds" multiple size="4">
+                            ${cardSetOptions}
+                        </select>
+                        <small>Hold Ctrl/Cmd to select multiple card sets</small>
+                    </div>
+                `;
+                break;
+            case 'cards':
+                // Get current card set IDs (handle both single and multiple)
+                const currentCardSetIdsForCards = item ? 
+                    (Array.isArray(item.cardSetIds) ? item.cardSetIds : 
+                    item.cardSetId ? [item.cardSetId] : []) 
+                    : [];
+                
+                // Create multi-select for card sets
+                let cardSetOptionsForCards = '';
+                database.cardSets.forEach(cs => {
+                    const selected = currentCardSetIdsForCards.includes(cs.id) ? 'selected' : '';
+                    cardSetOptionsForCards += `<option value="${cs.id}" ${selected}>${cs.name} (ID: ${cs.id}, ${cs.cards ? cs.cards.length : 0} cards)</option>`;
+                });
+                
+                fields = `
+                    <div class="form-group">
+                        <label>Card Sets (Multiple Selection)</label>
+                        <select class="form-control" id="bulletinCardSetIds" multiple size="4">
+                            ${cardSetOptionsForCards}
+                        </select>
+                        <small>Hold Ctrl/Cmd to select multiple card sets. Used for commendations, partners, etc.</small>
+                    </div>
+                `;
+                break;
+            case 'clubs':
+                // Create multi-select for club sets
+                let clubSetOptions = '<option value="">Select Club Set</option>';
+                (database.clubSets || []).forEach(cs => {
+                    const selected = item && item.clubSetIds && Array.isArray(item.clubSetIds) && 
+                                    item.clubSetIds.includes(cs.id) ? 'selected' : '';
+                    clubSetOptions += `<option value="${cs.id}" ${selected}>${cs.name} (ID: ${cs.id})</option>`;
+                });
+                
+                fields = `
+                    <div class="form-group">
+                        <label>Club Sets (Multiple Selection)</label>
+                        <select class="form-control" id="bulletinClubSetIds" multiple size="4">
+                            ${clubSetOptions}
+                        </select>
+                        <small>Hold Ctrl/Cmd to select multiple club sets</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Cards Per Row</label>
+                        <input type="number" class="form-control" id="bulletinClubsPerRow" 
+                            value="${item && item.clubsPerRow ? item.clubsPerRow : 3}" 
+                            min="1" max="6">
+                        <small>Number of club cards to show per row (1-6)</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Show Join Button</label>
+                        <input type="checkbox" class="form-control" id="bulletinShowJoinButton" 
+                            ${item && item.showJoinButton !== false ? 'checked' : ''}>
+                        <small>Show join/leave button on club cards</small>
+                    </div>
+                `;
+                break;
+            case 'events':
+                let impactYearsSetOptions = '<option value="">Select Years Set</option>';
+                database.yearsSets.forEach(ys => {
+                    const selected = item && item.yearsSetId === ys.id ? 'selected' : '';
+                    impactYearsSetOptions += `<option value="${ys.id}" ${selected}>${ys.name} (ID: ${ys.id})</option>`;
+                });
+                
+                fields = `
+                    <div class="form-group">
+                        <label>Years Set</label>
+                        <select class="form-control" id="bulletinYearsSetId">
+                            ${impactYearsSetOptions}
+                        </select>
+                        <small>Select a years set to display data from</small>
+                    </div>
+                `;
+                break;
+            default:
+                fields = '<p>No additional fields for this type</p>';
+        }
+        return fields;
+    }
+
+    function generateClubSetForm(clubSet = {}, id) {
+    const clubSetData = clubSet || { name: '', subtitle: '', clubs: [], displayAsCards: true };
+    
+    return `
+        <div class="form-group">
+            <label>ID</label>
+            <input type="number" class="form-control" id="clubsetId" 
+                value="${clubSetData.id || (database.clubSets.length > 0 ? Math.max(...database.clubSets.map(cs => cs.id)) + 1 : 1)}" 
+                ${!isCreating ? 'readonly' : ''}>
+        </div>
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" class="form-control" id="clubsetName" 
+                value="${clubSetData.name || ''}" 
+                placeholder="Enter club set name" required>
+        </div>
+        <div class="form-group">
+            <label>Subtitle (Optional)</label>
+            <input type="text" class="form-control" id="clubsetSubtitle" 
+                value="${clubSetData.subtitle || ''}" 
+                placeholder="Enter subtitle">
+        </div>
+        
+        <div class="form-group">
+            <label>Display as Cards</label>
+            <select class="form-control" id="clubsetDisplayType">
+                <option value="cards" ${clubSetData.displayAsCards !== false ? 'selected' : ''}>Cards</option>
+                <option value="list" ${clubSetData.displayAsCards === false ? 'selected' : ''}>List</option>
+            </select>
+            <small>Display clubs as cards or in a list format</small>
+        </div>
+        
+        <div class="form-section">
+            <h3>
+                Clubs Management
+                <button type="button" class="btn btn-primary" onclick="addClubItemRow()" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                    <i class="fas fa-plus"></i> Add Club Item
+                </button>
+            </h3>
+            
+            <div id="clubItemsContainer" style="max-height: 400px; overflow-y: auto; padding-right: 10px;">
+                ${clubSetData.clubs && clubSetData.clubs.length > 0 ? 
+                    clubSetData.clubs.map((clubItem, index) => generateClubItemRow(clubItem, index)).join('') 
+                    : generateClubItemRow({ id: 1, name: '', description: '', link: '' }, 0)
+                }
+            </div>
+        </div>
+    `;
+}
+
+// Generate a club item row (similar to card row)
+function generateClubItemRow(clubItem = {}, index) {
+    const currentPictureId = clubItem.picture || '';
+    const hasPicture = currentPictureId && database.pictureFolder[currentPictureId];
+    
+    return `
+        <div class="club-item-row" data-index="${index}">
+            <div class="club-item-header" style="background: #e8f4fd; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
+                <h4 style="margin: 0; color: var(--primary);">
+                    Club Item ${index + 1}
+                </h4>
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeClubItemRow(${index})" style="padding: 0.2rem 0.5rem; font-size: 0.8rem;">
+                    <i class="fas fa-trash"></i> Remove
+                </button>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Club ID</label>
+                    <input type="number" class="form-control club-item-field" 
+                        data-field="id" 
+                        value="${clubItem.id || (index + 1)}"
+                        min="1" required>
+                </div>
+                <div class="form-group">
+                    <label>Club Name *</label>
+                    <input type="text" class="form-control club-item-field" 
+                        data-field="name" 
+                        value="${clubItem.name || ''}"
+                        placeholder="Enter club name" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Description</label>
+                <textarea class="form-control club-item-field" 
+                    data-field="description" 
+                    rows="3"
+                    placeholder="Brief description of the club">${clubItem.description || ''}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Link URL *</label>
+                <input type="url" class="form-control club-item-field" 
+                    data-field="link" 
+                    value="${clubItem.link || ''}"
+                    placeholder="https://example.com/club-login" required>
+                <small>The link will open in a new tab when users click on the club card</small>
+            </div>
+            
+            <div class="form-group">
+                <label>Profile Picture (Optional)</label>
+                <div style="display: flex; gap: 1rem; align-items: flex-end;">
+                    <select class="form-control club-item-field club-picture-select" 
+                        data-field="picture" 
+                        style="flex: 1;"
+                        data-club-index="${index}"
+                        onchange="updateClubPicturePreview(this)">
+                        <option value="">No picture</option>
+                        ${Object.keys(database.pictureFolder).map(pictureId => {
+                            const picture = database.pictureFolder[pictureId];
+                            return `<option value="${pictureId}" ${currentPictureId === pictureId ? 'selected' : ''}>
+                                ${picture.fileName || pictureId}
+                            </option>`;
+                        }).join('')}
+                    </select>
+                    <button type="button" class="btn btn-secondary" onclick="openClubPictureSelectModal(${index})" style="white-space: nowrap;">
+                        <i class="fas fa-images"></i> Browse
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Picture Preview -->
+            <div id="clubPicturePreview-${index}" style="margin: 1rem 0; ${hasPicture ? '' : 'display: none;'}">
+                <div style="font-size: 0.9rem; margin-bottom: 0.5rem;">Preview:</div>
+                <div id="clubPicturePreviewContent-${index}">
+                    ${hasPicture ? `
+                        <div style="display: inline-block; text-align: center;">
+                            <img src="${database.pictureFolder[currentPictureId].path || `./picture/${database.pictureFolder[currentPictureId].fileName}`}" 
+                                alt="Preview" 
+                                style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px; border: 2px solid #ddd;"
+                                onerror="this.src='https://via.placeholder.com/100x100?text=No+Image'">
+                            <div style="font-size: 0.8rem; margin-top: 0.2rem; max-width: 100px; word-break: break-all;">
+                                ${database.pictureFolder[currentPictureId].fileName || currentPictureId}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Icon/Logo (Optional)</label>
+                <input type="text" class="form-control club-item-field" 
+                    data-field="icon" 
+                    value="${clubItem.icon || 'fas fa-users'}"
+                    placeholder="fas fa-users or image URL">
+                <small>Use Font Awesome icon class or image URL</small>
+            </div>
+            
+            <hr style="margin: 1.5rem 0; border-color: #eee;">
+        </div>
+    `;
+}
+
+function openClubPictureSelectModal(clubIndex) {
+    // Set the mode to club
+    currentPictureSelectionMode = 'club';
+    currentClubPictureSelection.clubIndex = clubIndex;
+    
+    // Get current selected picture from the select dropdown
+    const select = document.querySelector(`.club-picture-select[data-club-index="${clubIndex}"]`);
+    currentClubPictureSelection.selectedPictureId = select ? select.value : null;
+    
+    // Update modal title and description
+    document.getElementById('cardPictureSelectModalTitle').textContent = 'Select Profile Picture for Club';
+    document.getElementById('cardPictureSelectModalDescription').textContent = 'Select a picture. Only one picture can be selected per club.';
+    document.getElementById('applyPictureButton').textContent = 'Select Picture';
+    
+    // Load picture gallery
+    const gallery = document.getElementById('cardPictureGallery');
+    gallery.innerHTML = '';
+    
+    // Add "No Picture" option
+    const noPictureItem = document.createElement('div');
+    noPictureItem.className = 'picture-item';
+    noPictureItem.style.cursor = 'pointer';
+    noPictureItem.style.display = 'flex';
+    noPictureItem.style.flexDirection = 'column';
+    noPictureItem.style.alignItems = 'center';
+    noPictureItem.style.justifyContent = 'center';
+    noPictureItem.style.border = currentClubPictureSelection.selectedPictureId === '' || 
+                                 !currentClubPictureSelection.selectedPictureId ? 
+                                 '2px solid var(--success)' : '2px solid #eee';
+    noPictureItem.innerHTML = `
+        <i class="fas fa-user-slash" style="font-size: 2rem; color: #999; margin-bottom: 0.5rem;"></i>
+        <div style="color: #666;">No Picture</div>
+    `;
+    noPictureItem.onclick = () => selectPictureForClub('');
+    gallery.appendChild(noPictureItem);
+    
+    // Add existing pictures from database
+    Object.keys(database.pictureFolder).forEach(pictureId => {
+        const picture = database.pictureFolder[pictureId];
+        if (picture) {
+            const pictureItem = createPictureGalleryItemForClub(pictureId, picture);
+            gallery.appendChild(pictureItem);
+        }
+    });
+    
+    updateClubSelectedPictureInfo();
+    document.getElementById('cardPictureSelectModal').classList.add('active');
+}
+
+// Helper function to create picture gallery item for club
+function createPictureGalleryItemForClub(pictureId, picture) {
+    const div = document.createElement('div');
+    div.className = 'picture-item';
+    div.dataset.pictureId = pictureId;
+    
+    // Check if this picture is currently selected
+    const isSelected = currentClubPictureSelection.selectedPictureId === pictureId;
+    if (isSelected) {
+        div.classList.add('selected');
+        div.style.border = '2px solid var(--primary)';
+    } else {
+        div.style.border = '2px solid #eee';
+    }
+    
+    // Use the picture path
+    const imgSrc = picture.path || `./picture/${picture.fileName}`;
+    
+    div.innerHTML = `
+        <img src="${imgSrc}" alt="${picture.fileName || pictureId}"
+            style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px;"
+            onerror="this.src='https://via.placeholder.com/100x100?text=Picture+Not+Found'">
+        <div class="picture-info" style="font-size: 0.8rem; margin-top: 0.3rem; max-width: 100px; word-break: break-all;">
+            ${picture.fileName || pictureId}
+        </div>
+    `;
+    
+    div.onclick = () => selectPictureForClub(pictureId);
+    
+    return div;
+}
+
+// Function to select picture for club
+function selectPictureForClub(pictureId) {
+    currentClubPictureSelection.selectedPictureId = pictureId;
+    
+    // Update all picture items
+    const pictureItems = document.querySelectorAll('#cardPictureGallery .picture-item');
+    pictureItems.forEach(item => {
+        item.classList.remove('selected');
+        item.style.border = '2px solid #eee';
+    });
+    
+    // Find and highlight selected item
+    if (pictureId === '') {
+        // No picture selected
+        const noPictureItem = document.querySelector('#cardPictureGallery .picture-item:first-child');
+        if (noPictureItem) {
+            noPictureItem.classList.add('selected');
+            noPictureItem.style.border = '2px solid var(--success)';
+        }
+    } else {
+        const selectedItem = document.querySelector(`.picture-item[data-picture-id="${pictureId}"]`);
+        if (selectedItem) {
+            selectedItem.classList.add('selected');
+            selectedItem.style.border = '2px solid var(--primary)';
+        }
+    }
+    
+    updateClubSelectedPictureInfo();
+}
+
+function createClubPictureGalleryItem(pictureId, picture) {
+    const div = document.createElement('div');
+    div.className = 'picture-item';
+    div.dataset.pictureId = pictureId;
+    
+    if (currentClubPictureSelection.selectedPictureId === pictureId) {
+        div.classList.add('selected');
+    }
+    
+    const imgSrc = picture.path || `./picture/${picture.fileName}`;
+    
+    div.innerHTML = `
+        <img src="${imgSrc}" alt="${picture.fileName || pictureId}"
+            style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px;"
+            onerror="this.src='https://via.placeholder.com/100x100?text=Picture+Not+Found'">
+        <div class="picture-info">${picture.fileName || pictureId}</div>
+    `;
+    
+    div.onclick = () => selectClubPicture(pictureId);
+    
+    return div;
+}
+
+function selectClubPicture(pictureId) {
+    currentClubPictureSelection.selectedPictureId = pictureId;
+    
+    // Update all picture items
+    const pictureItems = document.querySelectorAll('#cardPictureGallery .picture-item');
+    pictureItems.forEach(item => {
+        item.classList.remove('selected');
+        item.style.border = '2px solid #eee';
+    });
+    
+    // Find and highlight selected item
+    if (pictureId === '') {
+        const noPictureItem = document.querySelector('#cardPictureGallery .picture-item:first-child');
+        if (noPictureItem) {
+            noPictureItem.classList.add('selected');
+            noPictureItem.style.border = '2px solid var(--success)';
+        }
+    } else {
+        const selectedItem = document.querySelector(`.picture-item[data-picture-id="${pictureId}"]`);
+        if (selectedItem) {
+            selectedItem.classList.add('selected');
+            selectedItem.style.border = '2px solid var(--primary)';
+        }
+    }
+    
+    updateClubSelectedPictureInfo();
+}
+
+function updateClubSelectedPictureInfo() {
+    const infoDiv = document.getElementById('cardSelectedPictureInfo');
+    const pictureId = currentClubPictureSelection.selectedPictureId;
+    
+    if (!pictureId) {
+        infoDiv.textContent = 'No picture selected';
+        return;
+    }
+    
+    const picture = database.pictureFolder[pictureId];
+    if (picture) {
+        infoDiv.textContent = `Selected: ${picture.fileName || pictureId}`;
+    } else {
+        infoDiv.textContent = 'Picture not found';
+    }
+}
+
+
+function applyClubPictureSelection() {
+    const { clubIndex, selectedPictureId } = currentClubPictureSelection;
+    
+    if (clubIndex !== null) {
+        // Update the select dropdown
+        const select = document.querySelector(`.club-picture-select[data-club-index="${clubIndex}"]`);
+        if (select) {
+            select.value = selectedPictureId || '';
+            
+            // Manually trigger the change event to update the preview
+            const changeEvent = new Event('change', {
+                bubbles: true,
+                cancelable: true
+            });
+            select.dispatchEvent(changeEvent);
+            
+            // Also update the club field value directly
+            const clubField = select.closest('.form-group').querySelector('.club-item-field[data-field="picture"]');
+            if (clubField) {
+                clubField.value = selectedPictureId || '';
+            }
+        }
+    }
+    
+    closeCardPictureSelectModal();
+    showNotification('Picture selected successfully!', 'success');
+}
+
+function updateClubPicturePreview(selectElement) {
+    const clubIndex = selectElement.getAttribute('data-club-index');
+    const pictureId = selectElement.value;
+    const previewDiv = document.getElementById(`clubPicturePreview-${clubIndex}`);
+    const previewContentDiv = document.getElementById(`clubPicturePreviewContent-${clubIndex}`);
+    
+    if (!pictureId || pictureId === '') {
+        previewDiv.style.display = 'none';
+        return;
+    }
+    
+    const picture = database.pictureFolder[pictureId];
+    if (picture) {
+        previewDiv.style.display = 'block';
+        const imgSrc = picture.path || `./picture/${picture.fileName}`;
+        previewContentDiv.innerHTML = `
+            <div style="display: inline-block; text-align: center;">
+                <img src="${imgSrc}" 
+                    alt="Preview" 
+                    style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px; border: 2px solid #ddd;"
+                    onerror="this.src='https://via.placeholder.com/100x100?text=No+Image'">
+                <div style="font-size: 0.8rem; margin-top: 0.2rem; max-width: 100px; word-break: break-all;">
+                    ${picture.fileName || pictureId}
+                </div>
+            </div>
+        `;
+    } else {
+        previewDiv.style.display = 'none';
+    }
+}
+
+// Add a new club item row
+function addClubItemRow() {
+    const container = document.getElementById('clubItemsContainer');
+    const clubItemRows = container.querySelectorAll('.club-item-row');
+    const newIndex = clubItemRows.length;
+    
+    const newClubItemRow = generateClubItemRow({
+        id: newIndex + 1,
+        name: '',
+        description: '',
+        link: '',
+        icon: 'fas fa-users'
+    }, newIndex);
+    
+    container.insertAdjacentHTML('beforeend', newClubItemRow);
+    scrollToNewClubItem(newIndex);
+}
+
+// Remove a club item row
+function removeClubItemRow(clubItemIndex) {
+    const clubItemRow = document.querySelector(`.club-item-row[data-index="${clubItemIndex}"]`);
+    if (clubItemRow && confirm('Are you sure you want to remove this club item?')) {
+        clubItemRow.remove();
+        reindexClubItemRows();
+    }
+}
+
+// Re-index club item rows after removal
+function reindexClubItemRows() {
+    const container = document.getElementById('clubItemsContainer');
+    const clubItemRows = container.querySelectorAll('.club-item-row');
+    
+    clubItemRows.forEach((row, newIndex) => {
+        row.setAttribute('data-index', newIndex);
+        // Update header text
+        const header = row.querySelector('.club-item-header h4');
+        if (header) {
+            header.textContent = `Club Item ${newIndex + 1}`;
+        }
+    });
+}
+
+// Scroll to newly added club item
+function scrollToNewClubItem(clubItemIndex) {
+    const newRow = document.querySelector(`.club-item-row[data-index="${clubItemIndex}"]`);
+    if (newRow) {
+        setTimeout(() => {
+            newRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+    }
+}
+    
+    // Update bulletin fields when type changes
+    function updateBulletinFields() {
+        const type = document.getElementById('bulletinType').value;
+        const item = currentEditId ? 
+            database.bulletins.find(b => b.id === currentEditId) : 
+            { type: type };
+        
+        document.getElementById('dynamicFields').innerHTML = generateBulletinFields(item);
+        
+        // If it's mixed type, initialize the multi-select properly
+        if (type === 'mixed') {
+            setTimeout(() => {
+                const select = document.getElementById('bulletinCardSetIds');
+                if (select) {
+                    // Make sure it's a multi-select
+                    select.multiple = true;
+                }
+            }, 0);
+        }
+    }
+
+
+    // Helper function to get picture URL from picture ID
+    function getPictureUrlFromId(pictureId) {
+        if (!pictureId || !platformData.pictureFolder || !platformData.pictureFolder[pictureId]) {
+            return null;
+        }
+        
+        const picture = platformData.pictureFolder[pictureId];
+        if (picture && picture.path) {
+            return picture.path;
+        } else if (picture && picture.fileName) {
+            return `./picture/${picture.fileName}`;
+        }
+        
+        return null;
+    }
+    
+    // Save item from modal - FIXED VERSION
+    function saveItem() {
+        let item;
+        
+        switch(currentEditType) {
+            case 'bulletin':
+                const bulletinId = parseInt(document.getElementById('bulletinId').value);
+                const bulletinTitle = document.getElementById('bulletinTitle').value;
+                const bulletinType = document.getElementById('bulletinType').value;
+                
+                item = {
+                    id: bulletinId,
+                    title: bulletinTitle,
+                    type: bulletinType
+                };
+                
+                // Add type-specific fields
+                if (bulletinType === 'scrolling') {
+                    const storyIdInput = document.getElementById('bulletinStoryId');
+                    const yearsSetIdInput = document.getElementById('bulletinYearsSetId');
+                    
+                    if (storyIdInput && !isNaN(storyIdInput.value)) {
+                        item.storyId = parseInt(storyIdInput.value);
+                    }
+                    if (yearsSetIdInput && !isNaN(yearsSetIdInput.value)) {
+                        item.yearsSetId = parseInt(yearsSetIdInput.value);
+                    }
+                } 
+                else if (bulletinType === 'years' || bulletinType === 'impact' || bulletinType === 'events') {
+                    const yearsSetIdInput = document.getElementById('bulletinYearsSetId');
+                    if (yearsSetIdInput && yearsSetIdInput.value && !isNaN(yearsSetIdInput.value)) {
+                        item.yearsSetId = parseInt(yearsSetIdInput.value);
+                    }
+                } 
+                else if (bulletinType === 'clubs') {
+                    // Get selected club set IDs from multi-select
+                    const clubSetSelect = document.getElementById('bulletinClubSetIds');
+                    if (clubSetSelect) {
+                        const selectedOptions = Array.from(clubSetSelect.selectedOptions);
+                        const clubSetIds = selectedOptions.map(option => parseInt(option.value));
+                        
+                        if (clubSetIds.length > 0) {
+                            item.clubSetIds = clubSetIds;
+                        }
+                    }
+                    
+                    const clubsPerRowInput = document.getElementById('bulletinClubsPerRow');
+                    const showJoinButtonInput = document.getElementById('bulletinShowJoinButton');
+                    
+                    if (clubsPerRowInput && !isNaN(clubsPerRowInput.value)) {
+                        item.clubsPerRow = parseInt(clubsPerRowInput.value);
+                    }
+                    if (showJoinButtonInput) {
+                        item.showJoinButton = showJoinButtonInput.checked;
+                    }
+                } 
+                else if (bulletinType === 'mixed') {
+                    const storyIdInput = document.getElementById('bulletinStoryId');
+                    if (storyIdInput && !isNaN(storyIdInput.value)) {
+                        item.storyId = parseInt(storyIdInput.value);
+                    }
+                    
+                    // Get selected card set IDs from multi-select
+                    const cardSetSelect = document.getElementById('bulletinCardSetIds');
+                    if (cardSetSelect) {
+                        const selectedOptions = Array.from(cardSetSelect.selectedOptions);
+                        const cardSetIds = selectedOptions.map(option => parseInt(option.value));
+                        
+                        if (cardSetIds.length > 0) {
+                            item.cardSetIds = cardSetIds;
+                            // Also set first card set ID for backward compatibility
+                            if (cardSetIds.length === 1) {
+                                item.cardSetId = cardSetIds[0];
+                            }
+                        }
+                    }
+                } 
+                else if (bulletinType === 'cards') {
+                    // Get selected card set IDs from multi-select
+                    const cardSetSelect = document.getElementById('bulletinCardSetIds');
+                    if (cardSetSelect) {
+                        const selectedOptions = Array.from(cardSetSelect.selectedOptions);
+                        const cardSetIds = selectedOptions.map(option => parseInt(option.value));
+                        
+                        if (cardSetIds.length > 0) {
+                            item.cardSetIds = cardSetIds;
+                            // Also set first card set ID for backward compatibility
+                            if (cardSetIds.length === 1) {
+                                item.cardSetId = cardSetIds[0];
+                            }
+                        }
+                    }
+                }
+                break;
+                
+            case 'yearsSet':
+                const yearsData = collectYearsDataFromForm();
+                
+                // Get the existing yearsSet to preserve data that might not be in the form
+                const existingYearsSet = currentEditId ? 
+                    database.yearsSets.find(ys => ys.id === currentEditId) : null;
+                
+                item = {
+                    id: parseInt(document.getElementById('yearsSetId').value),
+                    name: document.getElementById('yearsSetName').value,
+                    years: yearsData
+                };
+                
+                // If we're editing, try to preserve picture data that might not be in the form
+                if (existingYearsSet && !isCreating) {
+                    // Match years by year value and preserve pictures for events
+                    item.years.forEach(newYear => {
+                        const existingYear = existingYearsSet.years.find(ey => ey.year === newYear.year);
+                        if (existingYear) {
+                            newYear.events.forEach(newEvent => {
+                                const existingEvent = existingYear.events.find(ee => 
+                                    ee.name === newEvent.name || 
+                                    (ee.id && newEvent.id && ee.id === newEvent.id)
+                                );
+                                
+                                // If pictures are missing in newEvent but exist in existingEvent, preserve them
+                                if (existingEvent && existingEvent.pictures && 
+                                    (!newEvent.pictures || newEvent.pictures.length === 0)) {
+                                    newEvent.pictures = existingEvent.pictures;
+                                }
+                            });
+                        }
+                    });
+                }
+                break;
+                
+            case 'story':
+                item = {
+                    id: parseInt(document.getElementById('storyId').value),
+                    title: document.getElementById('storyTitle').value,
+                    content: document.getElementById('storyContent').value
+                };
+                break;
+                
+            case 'cardset':
+                const cardsetId = parseInt(document.getElementById('cardsetId').value);
+                const cardsetName = document.getElementById('cardsetName').value;
+                const cardsetSubtitle = document.getElementById('cardsetSubtitle').value;
+                
+                // Collect cards data
+                const cardRows = document.querySelectorAll('.card-row');
+                const cardsArray = [];
+                
+                cardRows.forEach(row => {
+                    const cardFields = row.querySelectorAll('.card-field');
+                    const cardData = {};
+                    
+                    cardFields.forEach(field => {
+                        const fieldName = field.getAttribute('data-field');
+                        let value = field.value;
+                        
+                        if (fieldName === 'id') {
+                            value = parseInt(value) || 0;
+                        }
+                        
+                        // Only add field if it has value (except for required fields)
+                        if (fieldName === 'name' || fieldName === 'id' || value) {
+                            cardData[fieldName] = value;
+                        }
+                    });
+                    
+                    cardsArray.push(cardData);
+                });
+                
+                item = {
+                    id: cardsetId,
+                    name: cardsetName,
+                    subtitle: cardsetSubtitle || undefined,
+                    cards: cardsArray
+                };
+                break;
+                
+            case 'clubset':
+                // Only access clubset elements when editing a clubset
+                const clubsetIdElem = document.getElementById('clubsetId');
+                const clubsetNameElem = document.getElementById('clubsetName');
+                const clubsetSubtitleElem = document.getElementById('clubsetSubtitle');
+                const clubsetDisplayTypeElem = document.getElementById('clubsetDisplayType');
+                
+                if (!clubsetIdElem || !clubsetNameElem) {
+                    showNotification('Error: Clubset form not properly loaded', 'error');
+                    return;
+                }
+                
+                const clubsetId = parseInt(clubsetIdElem.value);
+                const clubsetName = clubsetNameElem.value;
+                const clubsetSubtitle = clubsetSubtitleElem ? clubsetSubtitleElem.value : '';
+                const clubsetDisplayType = clubsetDisplayTypeElem ? clubsetDisplayTypeElem.value : 'cards';
+                
+                // Collect club items data
+                const clubItemRows = document.querySelectorAll('.club-item-row');
+                const clubItemsArray = [];
+                
+                clubItemRows.forEach(row => {
+                    const clubItemFields = row.querySelectorAll('.club-item-field');
+                    const clubItemData = {};
+                    
+                    clubItemFields.forEach(field => {
+                        const fieldName = field.getAttribute('data-field');
+                        let value = field.value;
+                        
+                        if (fieldName === 'id') {
+                            value = parseInt(value) || 0;
+                        }
+                        
+                        if (fieldName === 'name' || fieldName === 'id' || value) {
+                            clubItemData[fieldName] = value;
+                        }
+                    });
+                    
+                    // Ensure required fields exist
+                    if (clubItemData.name && clubItemData.link) {
+                        clubItemsArray.push(clubItemData);
+                    }
+                });
+                
+                item = {
+                    id: clubsetId,
+                    name: clubsetName,
+                    subtitle: clubsetSubtitle || undefined,
+                    clubs: clubItemsArray,
+                    displayAsCards: clubsetDisplayType === 'cards'
+                };
+                break;
+
+            default:
+                showNotification('Unknown item type: ' + currentEditType, 'error');
+                return;
+        }
+        
+        if (isCreating) {
+            // Add new item
+            if (currentEditType === 'yearsSet') {
+                database.yearsSets.push(item);
+            } else if (currentEditType === 'club') {
+                database.clubs.push(item);
+            } else if (currentEditType === 'bulletin') {
+                database.bulletins.push(item);
+            } else if (currentEditType === 'story') {
+                database.stories.push(item);
+            } else if (currentEditType === 'cardset') {
+                database.cardSets.push(item);
+            } else if (currentEditType === 'clubset') {
+                database.clubSets.push(item);
+            }
+        } else {
+            // Update existing item
+            if (currentEditType === 'yearsSet') {
+                const index = database.yearsSets.findIndex(ys => ys.id === currentEditId);
+                if (index !== -1) database.yearsSets[index] = item;
+            } else if (currentEditType === 'club') {
+                const index = database.clubs.findIndex(c => c.id === currentEditId);
+                if (index !== -1) database.clubs[index] = item;
+            } else if (currentEditType === 'bulletin') {
+                const index = database.bulletins.findIndex(b => b.id === currentEditId);
+                if (index !== -1) database.bulletins[index] = item;
+            } else if (currentEditType === 'story') {
+                const index = database.stories.findIndex(s => s.id === currentEditId);
+                if (index !== -1) database.stories[index] = item;
+            } else if (currentEditType === 'cardset') {
+                const index = database.cardSets.findIndex(cs => cs.id === currentEditId);
+                if (index !== -1) database.cardSets[index] = item;
+            } else if (currentEditType === 'clubset') {
+                const index = database.clubSets.findIndex(cs => cs.id === currentEditId);
+                if (index !== -1) database.clubSets[index] = item;
+            }
+        }
+        
+        closeModal();
+        sortAllData();
+        saveDatabase();
+        renderAllTables();
+        updateStats();
+        updateJSONEditor();
+        
+        showNotification(`${currentEditType} ${isCreating ? 'created' : 'updated'} successfully!`, 'success');
+    }
+
+    // Add render function for club sets
+    function renderClubSetRow(clubSet) {
+        const tr = document.createElement('tr');
+        const clubs = clubSet.clubs || [];
+        
+        tr.innerHTML = `
+            <td>${clubSet.id}</td>
+            <td>${clubSet.name || 'Unnamed Set'}</td>
+            <td>${clubSet.subtitle || '-'}</td>
+            <td>${clubSet.clubs ? clubSet.clubs.length : 0}</td>
+            <td><span class="bulletin-type type-${clubSet.displayAsCards !== false ? 'cards' : 'list'}">
+                ${clubSet.displayAsCards !== false ? 'Cards' : 'List'}
+            </span></td>
+            <td>
+                <button class="action-btn btn-view" onclick="viewItem('clubset', ${clubSet.id})">View</button>
+                <button class="action-btn btn-edit" onclick="openModal('clubset', 'edit', ${clubSet.id})">Edit</button>
+                <button class="action-btn btn-delete" onclick="deleteItem('clubset', ${clubSet.id})">Delete</button>
+            </td>
+        `;
+        return tr;
+    }
+
+    // When adding a new event, ensure it has a pictures array
+    function addEventToYear(yearIndex) {
+        const eventsContainer = document.getElementById(`events-${yearIndex}`);
+        const eventRows = eventsContainer.querySelectorAll('.event-row');
+        const newEventIndex = eventRows.length;
+        
+        // Create new event with empty pictures array
+        const newEvent = {
+            id: Date.now(),
+            name: `Event ${newEventIndex + 1}`,
+            date: new Date().toISOString().split('T')[0],
+            description: '',
+            attendees: 0,
+            location: '',
+            pictures: []  // Initialize with empty array
+        };
+        
+        const newEventRow = generateEventRow(newEvent, yearIndex, newEventIndex);
+        
+        eventsContainer.insertAdjacentHTML('beforeend', newEventRow);
+    }
+    
+    // Collect all years data from the form - FIXED to preserve pictures
+    function collectYearsDataFromForm() {
+        const yearRows = document.querySelectorAll('.year-row');
+        const yearsData = [];
+        
+        yearRows.forEach(row => {
+            const yearIndex = parseInt(row.getAttribute('data-index'));
+            const yearFields = row.querySelectorAll('.year-field');
+            const yearData = {};
+            
+            yearFields.forEach(field => {
+                const fieldName = field.getAttribute('data-field');
+                let value = field.value;
+                
+                if (fieldName === 'year') {
+                    value = parseInt(value) || 0;
+                }
+                
+                yearData[fieldName] = value;
+            });
+            
+            // Collect donations
+            const donationsContainer = document.getElementById(`donations-${yearIndex}`);
+            const donationRows = donationsContainer ? donationsContainer.querySelectorAll('.form-row') : [];
+            const donationsData = [];
+            
+            donationRows.forEach(donationRow => {
+                const donationFields = donationRow.querySelectorAll('.donation-field');
+                const donationData = {};
+                
+                donationFields.forEach(field => {
+                    const fieldName = field.getAttribute('data-field');
+                    let value = field.value;
+                    
+                    if (fieldName === 'amount') {
+                        value = parseFloat(value) || 0;
+                    }
+                    
+                    donationData[fieldName] = value;
+                });
+                
+                donationsData.push(donationData);
+            });
+            
+            // Collect events - FIXED: Use hidden fields for pictures
+            const eventsContainer = document.getElementById(`events-${yearIndex}`);
+            const eventRows = eventsContainer ? eventsContainer.querySelectorAll('.event-row') : [];
+            const eventsData = [];
+            
+            eventRows.forEach(eventRow => {
+                const eventIndex = parseInt(eventRow.getAttribute('data-event-index'));
+                const eventFields = eventRow.querySelectorAll('.event-field');
+                const eventData = {};
+                
+                // Get regular event fields
+                eventFields.forEach(field => {
+                    const fieldName = field.getAttribute('data-field');
+                    let value = field.value;
+                    
+                    if (fieldName === 'attendees') {
+                        value = parseInt(value) || 0;
+                    }
+                    
+                    eventData[fieldName] = value;
+                });
+                
+                // Get pictures from hidden field
+                const picturesField = document.getElementById(`eventPicturesField-${yearIndex}-${eventIndex}`);
+                if (picturesField) {
+                    try {
+                        eventData.pictures = JSON.parse(picturesField.value || '[]');
+                    } catch (e) {
+                        console.error('Error parsing pictures for event:', yearIndex, eventIndex, e);
+                        eventData.pictures = [];
+                    }
+                } else {
+                    eventData.pictures = [];
+                }
+                
+                // Ensure event has an ID
+                if (!eventData.id) {
+                    eventData.id = eventIndex + 1; // Use eventIndex + 1 as ID
+                }
+                
+                eventsData.push(eventData);
+            });
+            
+            yearData.donations = donationsData;
+            yearData.events = eventsData;
+            yearsData.push(yearData);
+        });
+        
+        return yearsData;
+    }
+    
+    // Delete item
+    function deleteItem(type, id) {
+        if (!confirm(`Are you sure you want to delete this ${type}?`)) return;
+        
+        try {
+            if (type === 'yearsSet') {
+                database.yearsSets = database.yearsSets.filter(ys => ys.id !== id);
+                
+                // Also remove references from bulletins
+                database.bulletins.forEach(b => {
+                    if (b.yearsSetId === id) {
+                        delete b.yearsSetId;
+                    }
+                });
+            } else if (type === 'club') {
+                database.clubs = database.clubs.filter(c => c.id !== id);
+            } else if (type === 'bulletin') {
+                database.bulletins = database.bulletins.filter(b => b.id !== id);
+            } else if (type === 'story') {
+                database.stories = database.stories.filter(s => s.id !== id);
+            } else if (type === 'cardset') {
+                database.cardSets = database.cardSets.filter(cs => cs.id !== id);
+            }
+            
+            sortAllData();
+            saveDatabase();
+            renderAllTables();
+            updateStats();
+            updateJSONEditor();
+            
+            showNotification(`${type} deleted successfully!`, 'success');
+        } catch (e) {
+            showNotification('Error deleting item: ' + e.message, 'error');
+        }
+    }
+    
+    // View item details
+    function viewItem(type, id) {
+        let item;
+        if (type === 'yearsSet') {
+            item = database.yearsSets.find(ys => ys.id === id);
+        } else if (type === 'club') {
+            item = database.clubs.find(c => c.id === id);
+        } else if (type === 'bulletin') {
+            item = database.bulletins.find(b => b.id === id);
+        } else if (type === 'story') {
+            item = database.stories.find(s => s.id === id);
+        } else if (type === 'cardset') {
+            item = database.cardSets.find(cs => cs.id === id);
+        }
+        
+        if (item) {
+            alert(JSON.stringify(item, null, 2));
+        } else {
+            alert('Item not found!');
+        }
+    }
+    
+    // Update statistics
+    function updateStats() {
+        document.getElementById('bulletinsCount').textContent = database.bulletins.length;
+        document.getElementById('storiesCount').textContent = database.stories.length;
+        document.getElementById('cardsetsCount').textContent = database.cardSets.length;
+        
+        // Count total club items across all club sets
+        let totalClubItems = 0;
+        if (database.clubSets) {
+            database.clubSets.forEach(set => {
+                totalClubItems += set.clubs ? set.clubs.length : 0;
+            });
+        }
+        document.getElementById('clubsCount').textContent = totalClubItems;
+    }
+    
+    // Update JSON editor
+    function updateJSONEditor() {
+        document.getElementById('jsonEditor').value = JSON.stringify(database, null, 2);
+    }
+    
+    // Save JSON from editor
+    function saveJSON() {
+        try {
+            const newData = JSON.parse(document.getElementById('jsonEditor').value);
+            // Validate the structure
+            if (!newData.bulletins || !newData.stories || !newData.cardSets || !newData.clubs || !newData.yearsSets) {
+                throw new Error('Invalid database structure. Missing required arrays.');
+            }
+            
+            database = newData;
+            sortAllData();
+            saveDatabase();
+            renderAllTables();
+            updateStats();
+            showNotification('JSON applied successfully!', 'success');
+        } catch (e) {
+            showNotification('Invalid JSON: ' + e.message, 'error');
+        }
+    }
+    
+    // Format JSON in editor
+    function formatJSON() {
+        try {
+            const json = JSON.parse(document.getElementById('jsonEditor').value);
+            document.getElementById('jsonEditor').value = JSON.stringify(json, null, 2);
+            showNotification('JSON formatted!', 'success');
+        } catch (e) {
+            showNotification('Invalid JSON: ' + e.message, 'error');
+        }
+    }
+    
+    // Copy JSON to clipboard
+    function copyJSON() {
+        const jsonText = document.getElementById('jsonEditor');
+        jsonText.select();
+        jsonText.setSelectionRange(0, 99999); // For mobile devices
+        try {
+            document.execCommand('copy');
+            showNotification('JSON copied to clipboard!', 'success');
+        } catch (e) {
+            showNotification('Failed to copy JSON: ' + e.message, 'error');
+        }
+    }
+    
+    // Search in tables
+    function searchTable(type, query) {
+        const table = document.getElementById(type + 'Table');
+        if (!table) return;
+        
+        const rows = table.getElementsByTagName('tr');
+        
+        for (let i = 0; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName('td');
+            let found = false;
+            
+            for (let j = 0; j < cells.length; j++) {
+                if (cells[j].textContent.toLowerCase().includes(query.toLowerCase())) {
+                    found = true;
+                    break;
+                }
+            }
+            
+            rows[i].style.display = found ? '' : 'none';
+        }
+    }
+    
+    // Search in JSON
+    function searchJSON(query) {
+        if (!query) {
+            updateJSONEditor();
+            return;
+        }
+        
+        const jsonText = JSON.stringify(database, null, 2);
+        const lines = jsonText.split('\n');
+        let found = false;
+        
+        const highlighted = lines.map(line => {
+            if (line.toLowerCase().includes(query.toLowerCase())) {
+                found = true;
+                return `<span style="background-color: yellow;">${line}</span>`;
+            }
+            return line;
+        }).join('\n');
+        
+        if (found) {
+            // Create a temporary div to hold the HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = highlighted;
+            document.getElementById('jsonEditor').value = tempDiv.textContent;
+        } else {
+            document.getElementById('jsonEditor').value = jsonText;
+            showNotification('Search term not found in JSON', 'info');
+        }
+    }
+    
+    // Show notification
+    function showNotification(message, type) {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.className = `notification ${type}`;
+        notification.style.display = 'block';
+        
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => {
+                notification.style.display = 'none';
+                notification.style.animation = '';
+            }, 300);
+        }, 3000);
+    }
+
+    // Trigger data change for other tabs
+    function triggerDataChange() {
+        // Create and dispatch a storage event
+        const event = new StorageEvent('storage', {
+            key: 'centerNecklaceDatabase',
+            newValue: localStorage.getItem('centerNecklaceDatabase'),
+            oldValue: localStorage.getItem('centerNecklaceDatabase'),
+            url: window.location.href,
+            storageArea: localStorage
+        });
+        
+        try {
+            window.dispatchEvent(event);
+        } catch (e) {
+            console.log('Data change triggered');
+        }
+    }
+
+    // Open picture selection modal for card
+function openCardPictureSelectModal(cardIndex) {
+    currentPictureSelectionMode = 'card';
+    currentCardPictureSelection.cardIndex = cardIndex;
+
+        document.getElementById('cardPictureSelectModalTitle').textContent = 'Select Profile Picture for Card';
+    document.getElementById('cardPictureSelectModalDescription').textContent = 'Select a picture for this card. Only one picture can be selected per card.';
+    document.getElementById('applyPictureButton').textContent = 'Select Picture';
+    
+    // Get current selected picture from the select dropdown
+    const select = document.querySelector(`.card-picture-select[data-card-index="${cardIndex}"]`);
+    currentCardPictureSelection.selectedPictureId = select ? select.value : null;
+    
+    // Load picture gallery
+    const gallery = document.getElementById('cardPictureGallery');
+    gallery.innerHTML = '';
+    
+    // Add "No Picture" option
+    const noPictureItem = document.createElement('div');
+    noPictureItem.className = 'picture-item';
+    noPictureItem.style.cursor = 'pointer';
+    noPictureItem.style.display = 'flex';
+    noPictureItem.style.flexDirection = 'column';
+    noPictureItem.style.alignItems = 'center';
+    noPictureItem.style.justifyContent = 'center';
+    noPictureItem.style.border = currentCardPictureSelection.selectedPictureId === '' ? '2px solid var(--success)' : '2px solid #eee';
+    noPictureItem.innerHTML = `
+        <i class="fas fa-user-slash" style="font-size: 2rem; color: #999; margin-bottom: 0.5rem;"></i>
+        <div style="color: #666;">No Picture</div>
+    `;
+    noPictureItem.onclick = () => selectCardPicture('');
+    gallery.appendChild(noPictureItem);
+    
+    // Add existing pictures from database
+    Object.keys(database.pictureFolder).forEach(pictureId => {
+        const picture = database.pictureFolder[pictureId];
+        const pictureItem = createCardPictureGalleryItem(pictureId, picture);
+        gallery.appendChild(pictureItem);
+    });
+    
+    updateCardSelectedPictureInfo();
+    document.getElementById('cardPictureSelectModal').classList.add('active');
+}
+
+// Create picture item for card gallery
+function createCardPictureGalleryItem(pictureId, picture) {
+    const div = document.createElement('div');
+    div.className = 'picture-item';
+    div.dataset.pictureId = pictureId;
+    
+    if (currentCardPictureSelection.selectedPictureId === pictureId) {
+        div.classList.add('selected');
+    }
+    
+    // Use the relative path
+    const imgSrc = picture.path || `./picture/${picture.fileName}`;
+    
+    div.innerHTML = `
+        <img src="${imgSrc}" alt="${picture.fileName || pictureId}"
+            style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px;"
+            onerror="this.src='https://via.placeholder.com/100x100?text=Picture+Not+Found'">
+        <div class="picture-info">${picture.fileName || pictureId}</div>
+    `;
+    
+    div.onclick = () => selectCardPicture(pictureId);
+    
+    return div;
+}
+
+// Select a picture in the modal
+function selectCardPicture(pictureId) {
+    currentCardPictureSelection.selectedPictureId = pictureId;
+    
+    // Update all picture items
+    const pictureItems = document.querySelectorAll('#cardPictureGallery .picture-item');
+    pictureItems.forEach(item => {
+        item.classList.remove('selected');
+        item.style.border = '2px solid #eee';
+    });
+    
+    // Find and highlight selected item
+    if (pictureId === '') {
+        // No picture selected
+        const noPictureItem = document.querySelector('#cardPictureGallery .picture-item:first-child');
+        if (noPictureItem) {
+            noPictureItem.classList.add('selected');
+            noPictureItem.style.border = '2px solid var(--success)';
+        }
+    } else {
+        const selectedItem = document.querySelector(`.picture-item[data-picture-id="${pictureId}"]`);
+        if (selectedItem) {
+            selectedItem.classList.add('selected');
+            selectedItem.style.border = '2px solid var(--primary)';
+        }
+    }
+    
+    updateCardSelectedPictureInfo();
+}
+
+// Update selected picture info
+function updateCardSelectedPictureInfo() {
+    const infoDiv = document.getElementById('cardSelectedPictureInfo');
+    const pictureId = currentCardPictureSelection.selectedPictureId;
+    
+    if (!pictureId) {
+        infoDiv.textContent = 'No picture selected';
+        return;
+    }
+    
+    const picture = database.pictureFolder[pictureId];
+    if (picture) {
+        infoDiv.textContent = `Selected: ${picture.fileName || pictureId}`;
+    } else {
+        infoDiv.textContent = 'Picture not found';
+    }
+}
+
+function applyCardPictureSelection() {
+    const { cardIndex, selectedPictureId } = currentCardPictureSelection;
+    
+    if (cardIndex !== null) {
+        // Update the select dropdown
+        const select = document.querySelector(`.card-picture-select[data-card-index="${cardIndex}"]`);
+        if (select) {
+            select.value = selectedPictureId || '';
+            
+            // Manually trigger the change event to update the preview
+            const changeEvent = new Event('change', {
+                bubbles: true,
+                cancelable: true
+            });
+            select.dispatchEvent(changeEvent);
+            
+            // Also update the card field value directly
+            const cardField = select.closest('.form-group').querySelector('.card-field[data-field="picture"]');
+            if (cardField) {
+                cardField.value = selectedPictureId || '';
+            }
+        }
+    }
+    
+    closeCardPictureSelectModal();
+    showNotification('Picture selected successfully!', 'success');
+}
+
+// Close card picture selection modal
+function closeCardPictureSelectModal() {
+    document.getElementById('cardPictureSelectModal').classList.remove('active');
+    currentCardPictureSelection = {
+        cardIndex: null,
+        selectedPictureId: null
+    };
+}
+
+// Initialize card picture preview on change
+document.addEventListener('DOMContentLoaded', function() {
+    // This will be set up when the modal opens
+    setTimeout(() => {
+        // Add change event listeners to card picture selects when they're created
+        document.addEventListener('change', function(e) {
+            if (e.target.classList.contains('card-picture-select')) {
+                updateCardPicturePreview(e.target);
+            }
+        });
+    }, 100);
+});
+
+// Update card picture preview
+function updateCardPicturePreview(selectElement) {
+    const cardIndex = selectElement.getAttribute('data-card-index');
+    const pictureId = selectElement.value;
+    const previewDiv = document.getElementById(`cardPicturePreview-${cardIndex}`);
+    const previewContentDiv = document.getElementById(`cardPicturePreviewContent-${cardIndex}`);
+    
+    if (!pictureId) {
+        previewDiv.style.display = 'none';
+        return;
+    }
+    
+    const picture = database.pictureFolder[pictureId];
+    if (picture) {
+        previewDiv.style.display = 'block';
+        previewContentDiv.innerHTML = `
+            <div style="display: inline-block; text-align: center;">
+                <img src="${picture.path || `./picture/${picture.fileName}`}" 
+                    alt="Preview" 
+                    style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px; border: 2px solid #ddd;"
+                    onerror="this.src='https://via.placeholder.com/100x100?text=No+Image'">
+                <div style="font-size: 0.8rem; margin-top: 0.2rem; max-width: 100px; word-break: break-all;">
+                    ${picture.fileName || pictureId}
+                </div>
+            </div>
+        `;
+    } else {
+        previewDiv.style.display = 'none';
+    }
+}
+
+    // Listen for storage changes from other tabs
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'centerNecklaceDatabase') {
+            showNotification('Database updated from another tab. Reloading...', 'info');
+            setTimeout(() => {
+                loadDatabase();
+            }, 1000);
+        }
+    });
+</script>
+</body>
+</html>
