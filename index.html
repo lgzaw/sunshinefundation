@@ -12,7 +12,24 @@
     <header class="header">
         <div class="logo">
             <i class="fas fa-gem logo-icon"></i>
-            <span>Sunshine Foundations</span>
+            <span class="logo-text">Sunshine Foundations</span>
+        </div>
+        
+        <!-- Mobile Top Bar (visible only on mobile) -->
+        <div class="mobile-top-bar">
+            <div class="search-container mobile-search">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search...">
+            </div>
+            
+            <button class="signin-btn mobile-signin" id="signinBtn">
+                <i class="fas fa-sign-in-alt"></i> Sign In
+            </button>
+            
+            <!-- Mobile Menu Button -->
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
         
         <!-- Header Navigation for wide screens -->
@@ -28,18 +45,14 @@
             <div class="header-nav-item" data-bulletin="9">Contacts</div>
         </div>
         
-        <div class="header-actions">
-            <div class="search-container">
+        <!-- Desktop Actions (visible only on wide screens) -->
+        <div class="header-actions desktop-actions">
+            <div class="search-container desktop-search">
                 <i class="fas fa-search search-icon"></i>
                 <input type="text" class="search-input" placeholder="Search...">
             </div>
             
-            <!-- Mobile Menu Button (visible only on narrow screens) -->
-            <button class="mobile-menu-btn" id="mobileMenuBtn">
-                <i class="fas fa-bars"></i>
-            </button>
-            
-            <button class="signin-btn" id="signinBtn">
+            <button class="signin-btn desktop-signin" id="signinBtnDesktop">
                 <i class="fas fa-sign-in-alt"></i> Sign In
             </button>
         </div>
@@ -1065,7 +1078,7 @@
         showNotification('Auto-rotation paused. Click "Resume Rotation" to resume.', 'info');
         
         // Add resume button if not already present
-        addResumeRotationButton();
+        //addResumeRotationButton();
     }
 
     function addResumeRotationButton() {
@@ -2876,6 +2889,14 @@ function showEventsOnly(yearData) {
     signinBtn.addEventListener('click', () => {
         signinModal.classList.add('active');
     });
+
+    // Desktop sign-in button
+    const signinBtnDesktop = document.getElementById('signinBtnDesktop');
+    if (signinBtnDesktop) {
+        signinBtnDesktop.addEventListener('click', () => {
+            signinModal.classList.add('active');
+        });
+    }
     
     // Close modal
     document.getElementById('closeModal').addEventListener('click', () => {
@@ -3220,7 +3241,7 @@ function showEventsOnly(yearData) {
     // Initialize everything
     // Initialize everything
 function initialize() {
-    addReloadButton();
+    
     initializeNecklace();
     updateDisplay(activeBulletin);
     updateNavigationStates();
